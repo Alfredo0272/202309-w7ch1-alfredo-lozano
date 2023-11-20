@@ -45,9 +45,7 @@ export class BeerController {
     try {
       const beerId = parseInt(req.params.id, 10);
       await this.repo.delete(beerId);
-      res.status(204);
-      res.statusMessage = 'No Content';
-      res.json({});
+      res.status(204).json({});
     } catch (error) {
       next(error);
     }
