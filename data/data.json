@@ -1,0 +1,25 @@
+{
+  "beer": [
+    {
+      "id": 1,
+      "name": "revolt",
+      "brewer": "Blackstorm",
+      "style": "American Pale Ale",
+      "alcohol": "5%"
+    },
+    {
+      "id": 2,
+      "name": "Andromeda",
+      "brewer": "Omnipollo",
+      "style": "Imperial Stout",
+      "alcohol": "15,5%"
+    },
+    {
+      "id": 3,
+      "name": "The Madrileño",
+      "brewer": "Oso Brew Co.",
+      "style": "Imperial IPA",
+      "alcohol": "8,5%"
+    }
+  ]
+}
