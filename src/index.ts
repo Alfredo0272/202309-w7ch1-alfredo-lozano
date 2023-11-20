@@ -1,7 +1,11 @@
 import { createServer } from 'http';
 import { app } from './app.js';
+import createDebug from 'debug';
+
+const debug = createDebug('W7E:index');
 
 const PORT = process.env.PORT || 1969;
+debug('Starting server');
 
 const server = createServer(app);
 

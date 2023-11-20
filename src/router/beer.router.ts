@@ -1,16 +1,18 @@
 import { Router as createRouter } from 'express';
-import {
-  create,
-  getAll,
-  getById,
-  remove,
-  update,
-} from '../controller/beer.controler.js';
+import createDebug from 'debug';
+import { BeerController } from '../controller/beer.controler.js';
+
+const debug = createDebug('W7E:beer:router');
 
 export const beerRouter = createRouter();
+debug('Starting');
+const controller = new BeerController();
 
-beerRouter.get('/', getAll);
-beerRouter.get('/:id', getById);
-beerRouter.post('/', create);
-beerRouter.patch('/:id', update);
-beerRouter.delete('/:id', remove);
+beerRouter.get('/', controller.getAll.bind(controller));
+beerRouter.get('/search', controller.search.bind(controller));
+beerRouter.get('/:id', controller.getById.bind(controller));
+beerRouter.post('/', controller.create.bind(controller));
+beerRouter.patch('/:id', controller.update.bind(controller));
+beerRouter.patch('addUser/:id', controller.update.bind(controller));
+beerRouter.patch('removeUser/:id', controller.update.bind(controller));
+beerRouter.delete('/:id', controller.delete.bind(controller));

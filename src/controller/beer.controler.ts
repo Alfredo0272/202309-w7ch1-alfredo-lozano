@@ -1,89 +1,53 @@
-/* eslint-disable no-negated-condition */
-import { Request, Response } from 'express';
-import { ObjectEncodingOptions } from 'fs';
-import fs from 'fs/promises';
-import { Beer } from '../model/beer.model';
+import { NextFunction, Request, Response } from 'express';
+import { BeerFileRepo } from '../repos/beer.file.repo.js';
+import createDebug from 'debug';
 
-const fileName = './data/data.json';
-const codeOptions: ObjectEncodingOptions = {
-  encoding: 'utf-8',
-};
+const debug = createDebug('W7E:tasks:controller');
 
-export const readDataFile = async () => {
-  try {
-    const rawData = (await fs.readFile(fileName, codeOptions)) as string;
-    return JSON.parse(rawData).beer as Beer[];
-  } catch (error) {
-    console.log((error as Error).message);
+export class BeerController {
+  repo: BeerFileRepo;
+  constructor() {
+    debug('Instantiated');
+    this.repo = new BeerFileRepo();
   }
-};
 
-const writeDataFile = async (beer: Beer[]) => {
-  try {
-    const data = { beer };
-    await fs.writeFile(fileName, JSON.stringify(data), codeOptions);
-  } catch (error) {
-    console.log((error as Error).message);
+  async getAll(_req: Request, res: Response) {
+    const result = await this.repo.getAll();
+    res.json(result);
   }
-};
 
-export const getAll = async (_req: Request, res: Response) => {
-  const jsonData = await readDataFile();
-  res.json(jsonData);
-};
-
-export const getById = async (req: Request, res: Response) => {
-  const jsonData = (await readDataFile()) as Beer[];
-  const result = jsonData.find(
-    (item: { id: number }) => item.id === Number(req.params.id)
-  );
-  res.json(result);
-};
-
-export const create = async (req: Request, res: Response) => {
-  const jsonData = (await readDataFile()) as Beer[];
-  const maxId = Math.max(...jsonData.map((beer) => beer.id), 0);
-  const newBeer = { ...req.body, id: maxId + 1 };
-  jsonData.push(newBeer);
-  await writeDataFile(jsonData);
-  res.json(newBeer);
-};
-
-export const update = async (req: Request, res: Response) => {
-  try {
-    const jsonData = (await readDataFile()) as Beer[];
-    const index = jsonData.findIndex(
-      (item: { id: number }) => item.id === Number(req.params.id)
-    );
-
-    if (index !== -1) {
-      const updatedBeer = { ...jsonData[index], ...req.body };
-      jsonData[index] = updatedBeer;
-      await writeDataFile(jsonData);
-      res.json(updatedBeer);
-    } else {
-      res.status(404).json({ error: 'Beer not found' });
+  async getById(req: Request, res: Response, next: NextFunction) {
+    try {
+      const beerId = parseInt(req.params.id, 10);
+      const result = await this.repo.getById(beerId);
+      res.json(result);
+    } catch (error) {
+      next(error);
     }
-  } catch (error) {
-    console.log((error as Error).message);
   }
-};
 
-export const remove = async (req: Request, res: Response) => {
-  try {
-    const jsonData = (await readDataFile()) as Beer[];
-    const index = jsonData.findIndex(
-      (item: { id: number }) => item.id === Number(req.params.id)
-    );
+  search = (_req: Request, _res: Response) => {};
 
-    if (index !== -1) {
-      jsonData.splice(index, 1);
-      await writeDataFile(jsonData);
-      res.json({});
-    } else {
-      res.status(404).json({ error: 'Beer not found' });
+  async create(req: Request, res: Response) {
+    const result = await this.repo.create(req.body);
+    res.status(201);
+    res.statusMessage = 'Created';
+    res.json(result);
+  }
+
+  async update(req: Request, res: Response) {
+    const beerId = parseInt(req.params.id, 10);
+    const result = await this.repo.update(beerId, req.body);
+    res.json(result);
+  }
+
+  async delete(req: Request, res: Response, next: NextFunction) {
+    try {
+      const beerId = parseInt(req.params.id, 10);
+      await this.repo.delete(beerId);
+      res.status(204).json({});
+    } catch (error) {
+      next(error);
     }
-  } catch (error) {
-    console.log((error as Error).message);
   }
-};
+}
