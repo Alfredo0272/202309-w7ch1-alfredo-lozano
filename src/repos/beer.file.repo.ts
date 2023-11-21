@@ -31,10 +31,6 @@ export class BeerFileRepo implements Repository<Beer> {
     return result;
   }
 
-  search({ _key, _value }: { _key: string; _value: unknown }): Promise<Beer[]> {
-    throw new Error('Method not implemented.');
-  }
-
   async create(newItem: Omit<Beer, 'id'>): Promise<Beer> {
     const id = (this.beers.length + 1).toString();
     const result: Beer = { ...newItem, id };
