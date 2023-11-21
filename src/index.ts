@@ -2,7 +2,6 @@ import { createServer } from 'http';
 import { app } from './app.js';
 import createDebug from 'debug';
 import { dbConnect } from './services/db.conect.js';
-import { error } from 'console';
 
 const debug = createDebug('W7E:index');
 const PORT = process.env.PORT || 1969;

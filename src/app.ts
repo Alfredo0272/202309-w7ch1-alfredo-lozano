@@ -5,6 +5,7 @@ import { beerRouter } from './router/beer.router.js';
 import createDebug from 'debug';
 const debug = createDebug('W7E:app');
 import { errorMiddleware } from './middleware/error.middleware.js';
+import { pubsRouter } from './router/pubs.router.js';
 
 export const app = express();
 debug('Starting');

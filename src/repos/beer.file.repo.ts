@@ -11,7 +11,7 @@ export class BeerFileRepo implements Repository<Beer> {
   beers: Beer[];
   constructor() {
     debug('Instantiated');
-    this.file = './data/data.json';
+    this.file = './data/beer.json';
     this.beers = [];
     this.loadData();
   }
