@@ -3,55 +3,61 @@ import { BeerController } from './beer.controler'; // Asegúrate de usar el nomb
 import { BeerFileRepo } from '../repos/beer.file.repo.js';
 
 describe('Given BeerController class', () => {
-  describe('When we instantiate it', () => {
-    let controller: BeerController;
-    let mockRequest: Request;
-    let mockResponse: Response;
+  let controller: BeerController;
+  let mockRequest: Request;
+  let mockResponse: Response;
+  let mockNext: jest.Mock;
+  beforeEach(() => {
+    mockRequest = {
+      body: {},
+      params: {},
+    } as Request;
+    mockResponse = { json: jest.fn() } as unknown as Response;
+    mockNext = jest.fn();
+  });
 
+  describe('When we instantiate it without errors', () => {
     beforeEach(() => {
       const mockRepo = {
         getAll: jest.fn().mockResolvedValue([{}]),
+        getById: jest.fn().mockResolvedValue({}),
+        create: jest.fn().mockResolvedValue([{}]),
       } as unknown as BeerFileRepo;
 
       controller = new BeerController(mockRepo);
-      mockRequest = {} as Request;
-      mockResponse = {} as Response;
     });
-
-    test('Then getAll should respond with the expected data', async () => {
+    test('then get all should respond with expected data', async () => {
       await controller.getAll(mockRequest, mockResponse);
       expect(mockResponse.json).toHaveBeenCalledWith([{}]);
+    });
+
+    test('then getById should should respond with expected data', async () => {
+      await controller.getById(mockRequest, mockResponse, mockNext);
+      expect(mockResponse.json).toHaveBeenCalledWith({});
+    });
+
+    test('then create should return a new data', async () => {
+      await controller.create(mockRequest, mockResponse, mockNext);
+      expect(mockResponse.json).toHaveBeenCalledWith([{}]);
+    });
+  });
+  describe('When we instantiate it WITH errors', () => {
+    let mockError: Error;
+    beforeEach(() => {
+      mockError = new Error('Mock Error');
+      const mockRepo = {
+        getById: jest.fn().mockRejectedValue(mockError),
+      } as unknown as BeerFileRepo;
+      controller = new BeerController(mockRepo);
+    });
+    test('Then getByID should respond with the expected data', async () => {
+      await controller.getById(mockRequest, mockResponse, mockNext);
+      expect(mockNext).toHaveBeenCalledWith(mockError);
     });
   });
 });
 
-//
-//       const controller = new BeerController();
-//       const mockRequest: Request = {
-//         body: {},
-//       } as Request;
-//       const mockResponse: Response = {
-//         json: jest.fn(),
-//       } as unknown as Response;
-//
-//     });
-
-//     test('Then getById should...', async () => {
-//       const mockRequest: Request = {
-//         params: { id: '1' },
-//       } as unknown as Request;
-//       const mockResponse: Response = { json: jest.fn() } as unknown as Response;
-//       const next = jest.fn();
-//       const beerController = new BeerController();
-//       beerController.repo.getById = jest
-//         .fn()
-//         .mockResolvedValue({ id: '1', name: 'Beer' });
-//       await beerController.getById(mockRequest, mockResponse, next);
-//       expect(beerController.repo.getById).toHaveBeenCalledWith('1');
-//       expect(mockResponse.json).toHaveBeenCalledWith({ id: '1', name: 'Beer' });
-//     });
-
-//     test('Then create should...', async () => {
+//     Test('Then create should...', async () => {
 //       const beerController = new BeerController();
 //       const req = {
 //         body: {},
