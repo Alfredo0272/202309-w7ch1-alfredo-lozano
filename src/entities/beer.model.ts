@@ -1,5 +1,5 @@
 export type Beer = {
-  id: number;
+  id: string;
   name: string;
   brewer: string;
   style: string;

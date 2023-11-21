@@ -1,19 +1,23 @@
 import { NextFunction, Request, Response } from 'express';
 import createDebug from 'debug';
 import { Repository } from '../repos/repo.js';
-import { Beer } from '../entities/beer.model.js';
+import { Pubs } from '../entities/pubs.model.js';
 
-const debug = createDebug('W7E:tasks:controller');
+const debug = createDebug('W7E:pubs:controller');
 
-export class BeerController {
+export class PubsController {
   // eslint-disable-next-line no-unused-vars
-  constructor(private repo: Repository<Beer>) {
+  constructor(private repo: Repository<Pubs>) {
     debug('Instantiated');
   }
 
-  async getAll(_req: Request, res: Response) {
-    const result = await this.repo.getAll();
-    res.json(result);
+  async getAll(_req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = await this.repo.getAll();
+      res.json(result);
+    } catch (error) {
+      next(error);
+    }
   }
 
   async getById(req: Request, res: Response, next: NextFunction) {
@@ -48,7 +52,9 @@ export class BeerController {
   async delete(req: Request, res: Response, next: NextFunction) {
     try {
       await this.repo.delete(req.params.id);
-      res.status(204).json({});
+      res.status(204);
+      res.statusMessage = 'No Content';
+      res.json({});
     } catch (error) {
       next(error);
     }
