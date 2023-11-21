@@ -1,14 +1,14 @@
 import { NextFunction, Request, Response } from 'express';
-import { BeerFileRepo } from '../repos/beer.file.repo.js';
 import createDebug from 'debug';
+import { Repository } from '../repos/repo.js';
+import { Beer } from '../entities/beer.model.js';
 
 const debug = createDebug('W7E:tasks:controller');
 
 export class BeerController {
-  repo: BeerFileRepo;
-  constructor() {
+  // eslint-disable-next-line no-unused-vars
+  constructor(private repo: Repository<Beer>) {
     debug('Instantiated');
-    this.repo = new BeerFileRepo();
   }
 
   async getAll(_req: Request, res: Response) {
