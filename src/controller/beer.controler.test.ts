@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { BeerController } from './beer.controler';
 import { BeerFileRepo } from '../repos/beer.file.repo.js';
 import { Repository } from '../repos/repo';
