@@ -3,7 +3,6 @@ import { HttpError } from '../types/http.error.js';
 import createDebug from 'debug';
 import fs from 'fs/promises';
 import { Beer } from '../entities/beer.model.js';
-import { randomInt } from 'crypto';
 
 const debug = createDebug('W7E:beer:file:repo');
 
@@ -26,7 +25,7 @@ export class BeerFileRepo implements Repository<Beer> {
     return this.beers;
   }
 
-  async getById(id: number): Promise<Beer> {
+  async getById(id: string): Promise<Beer> {
     const result = this.beers.find((item) => item.id === id);
     if (!result) throw new HttpError(404, 'Not Found', 'GetById not possible');
     return result;
@@ -37,13 +36,14 @@ export class BeerFileRepo implements Repository<Beer> {
   }
 
   async create(newItem: Omit<Beer, 'id'>): Promise<Beer> {
-    const result: Beer = { ...newItem, id: randomInt(0, 1000) };
-    const newBeer = [...this.beers, result];
-    await this.save(newBeer as Beer[]);
+    const id = (this.beers.length + 1).toString();
+    const result: Beer = { ...newItem, id };
+    const newTasks = [...this.beers, result];
+    await this.save(newTasks as Beer[]);
     return result;
   }
 
-  async update(id: number, updatedItem: Partial<Beer>): Promise<Beer> {
+  async update(id: string, updatedItem: Partial<Beer>): Promise<Beer> {
     let result = this.beers.find((item) => item.id === id);
     if (!result) throw new HttpError(404, 'Not Found', 'Update not possible');
     result = { ...result, ...updatedItem } as Beer;
@@ -52,13 +52,13 @@ export class BeerFileRepo implements Repository<Beer> {
     return result;
   }
 
-  async delete(id: number): Promise<void> {
-    const newBeer = this.beers.filter((item) => item.id !== id);
-    if (newBeer.length === this.beers.length) {
+  async delete(id: string): Promise<void> {
+    const newTasks = this.beers.filter((item) => item.id !== id);
+    if (newTasks.length === this.beers.length) {
       throw new HttpError(404, 'Not Found', 'Delete not possible');
     }
 
-    await this.save(newBeer);
+    await this.save(newTasks);
   }
 
   private async save(newBeers: Beer[]) {

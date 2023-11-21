@@ -18,8 +18,7 @@ export class BeerController {
 
   async getById(req: Request, res: Response, next: NextFunction) {
     try {
-      const beerId = parseInt(req.params.id, 10);
-      const result = await this.repo.getById(beerId);
+      const result = await this.repo.getById(req.params.id);
       res.json(result);
     } catch (error) {
       next(error);
@@ -28,23 +27,29 @@ export class BeerController {
 
   search = (_req: Request, _res: Response) => {};
 
-  async create(req: Request, res: Response) {
-    const result = await this.repo.create(req.body);
-    res.status(201);
-    res.statusMessage = 'Created';
-    res.json(result);
+  async create(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = await this.repo.create(req.body);
+      res.status(201);
+      res.statusMessage = 'Created';
+      res.json(result);
+    } catch (error) {
+      next(error);
+    }
   }
 
-  async update(req: Request, res: Response) {
-    const beerId = parseInt(req.params.id, 10);
-    const result = await this.repo.update(beerId, req.body);
-    res.json(result);
+  async update(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = await this.repo.update(req.params.id, req.body);
+      res.json(result);
+    } catch (error) {
+      next(error);
+    }
   }
 
   async delete(req: Request, res: Response, next: NextFunction) {
     try {
-      const beerId = parseInt(req.params.id, 10);
-      await this.repo.delete(beerId);
+      await this.repo.delete(req.params.id);
       res.status(204).json({});
     } catch (error) {
       next(error);
