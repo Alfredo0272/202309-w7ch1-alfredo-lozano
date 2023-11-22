@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { Pubs } from '../entities/pubs.model';
+import { Pubs } from '../../entities/pubs.model';
 
 export const PubsSchema = new Schema<Pubs>({
   name: {
@@ -17,6 +17,12 @@ export const PubsSchema = new Schema<Pubs>({
     required: false,
     unique: true,
   },
+  visitado: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+    },
+  ],
 });
 
 PubsSchema.set('toJSON', {

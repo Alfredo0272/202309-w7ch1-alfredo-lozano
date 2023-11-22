@@ -1,12 +1,13 @@
 export type LoginUser = {
-  id: string;
-  userNane: string;
   password: string;
+  email: string;
 };
 
 export type User = LoginUser & {
+  id: string;
   name: string;
   surname: string;
   age: number;
-  email: string;
+  userNane: string;
+  visitado: [];
 };

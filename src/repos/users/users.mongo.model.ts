@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { User } from '../../entities/user';
+import { User } from '../../entities/user.model';
 
 export const userSchema = new Schema<User>({
   name: {
@@ -32,6 +32,12 @@ export const userSchema = new Schema<User>({
     required: true,
     unique: true,
   },
+  visitado: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Pubs',
+    },
+  ],
 });
 
 userSchema.set('toJSON', {
@@ -43,4 +49,4 @@ userSchema.set('toJSON', {
   },
 });
 
-export const PubsModel = model('Pubs', userSchema, 'pubs');
+export const UserModel = model('Users', userSchema, 'user');
