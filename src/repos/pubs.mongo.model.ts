@@ -1,7 +1,7 @@
 import { Schema, model } from 'mongoose';
 import { Pubs } from '../entities/pubs.model';
 
-const PubsSchema = new Schema<Pubs>({
+export const PubsSchema = new Schema<Pubs>({
   name: {
     type: String,
     required: true,
@@ -16,6 +16,15 @@ const PubsSchema = new Schema<Pubs>({
     type: String,
     required: false,
     unique: true,
+  },
+});
+
+PubsSchema.set('toJSON', {
+  transform(_document, returnedObject) {
+    returnedObject.id = returnedObject._id;
+    delete returnedObject._id;
+    delete returnedObject.__v;
+    delete returnedObject.passwd;
   },
 });
 

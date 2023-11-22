@@ -1,5 +1,6 @@
 import fs from 'fs/promises';
 import { PubsMongoRepo } from './pubs.mongo.repo';
+import { PubsModel } from './pubs.mongo.model';
 
 jest.mock('fs/promises');
 
@@ -17,16 +18,18 @@ describe('Given PubsMongoRepo class', () => {
     expect(repo).toBeInstanceOf(PubsMongoRepo);
   });
 
-  // Test('should return a Pubs object when given a valid id', async () => {
-  //   const mockId = '1';
-  //   const pubsWithMockId = {
-  //     id: mockId,
-  //     name: 'Mock Pubs',
-  //     owner: 'mock pepe',
-  //     direction: 'mock direction',
-  //   };
-  //   repo.pubs.push(pubsWithMockId);
-  //   const result = await repo.getById(mockId);
-  //   expect(result).toEqual(expect.objectContaining({ id: mockId }));
-  // });
+  test('should return a Pubs object when given a valid id', async () => {
+    const mockId = '';
+    const pubsWithMockId = {
+      id: mockId,
+      name: 'Mock Pubs',
+      owner: 'mock pepe',
+      direction: 'mock direction',
+    };
+    jest.spyOn(PubsModel, 'findById').mockResolvedValueOnce(pubsWithMockId);
+    const result = await repo.getById(mockId);
+
+    expect(result).toEqual(pubsWithMockId);
+    expect(PubsModel.findById).toHaveBeenCalledWith(mockId);
+  });
 });

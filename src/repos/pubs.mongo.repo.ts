@@ -23,7 +23,7 @@ export class PubsMongoRepo implements Repository<Pubs> {
   }
 
   async getAll(): Promise<Pubs[]> {
-    const result = await PubsModel.find();
+    const result = await PubsModel.find().exec();
     return result;
   }
 
