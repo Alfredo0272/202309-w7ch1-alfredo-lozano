@@ -32,18 +32,6 @@ export const userSchema = new Schema<User>({
     required: true,
     unique: true,
   },
-  visitado: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: 'Pubs',
-    },
-  ],
-  probada: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: 'Beers',
-    },
-  ],
 });
 
 userSchema.set('toJSON', {

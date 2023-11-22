@@ -5,4 +5,5 @@ export type Beer = {
   style: string;
   alcohol: string;
   probada: string;
+  autor: string;
 };

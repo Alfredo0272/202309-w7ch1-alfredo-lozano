@@ -23,6 +23,12 @@ export const BeersSchema = new Schema<Beer>({
     required: true,
     unique: false,
   },
+  autor: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+    },
+  ],
   probada: [
     {
       type: Schema.Types.ObjectId,
