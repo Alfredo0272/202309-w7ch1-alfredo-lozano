@@ -3,6 +3,7 @@ import createDebug from 'debug';
 import { LoginUser, User } from '../../entities/user.model.js';
 import { UserModel } from './users.mongo.model.js';
 import { HttpError } from '../../types/http.error.js';
+import { Auth } from '../../services/auth.js';
 
 const debug = createDebug('W7E:trips:mongo:repo');
 
@@ -13,11 +14,10 @@ export class UsersMongoRepo implements Repository<User> {
 
   async login(loginUser: LoginUser): Promise<User[]> {
     const results = await UserModel.find({ email: loginUser.email }).exec();
-    if (!results || results.length === 0) {
-      throw new HttpError(401, 'Unauthorized');
-    }
-
-    if (results[0].password !== loginUser.password) {
+    if (
+      !results ||
+      (await Auth.compare(loginUser.password, results[0].password))
+    ) {
       throw new HttpError(401, 'Unauthorized');
     }
 
@@ -25,6 +25,7 @@ export class UsersMongoRepo implements Repository<User> {
   }
 
   async create(newItem: Omit<User, 'id'>): Promise<User> {
+    newItem.password = await Auth.hash(newItem.password);
     const result: User = await UserModel.create(newItem);
     return result;
   }

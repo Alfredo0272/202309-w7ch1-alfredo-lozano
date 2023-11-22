@@ -10,4 +10,5 @@ export type User = LoginUser & {
   age: number;
   userNane: string;
   visitado: [];
+  probada: [];
 };

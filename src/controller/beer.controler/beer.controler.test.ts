@@ -1,15 +1,15 @@
 import { Request, Response } from 'express';
-import { Repository } from '../repos/repo';
-import { Pubs } from '../entities/pubs.model';
-import { PubsMongoRepo } from '../repos/pubs/pubs.mongo.repo';
-import { PubsController } from './pubs.controler';
+import { BeerController } from './beer.controler';
+import { Repository } from '../../repos/repo';
+import { Beer } from '../../entities/beer.model';
+import { BeerMongoRepo } from '../../repos/beer/beer.mongo.repo';
 
 describe('Given BeerController class', () => {
-  let controller: PubsController;
+  let controller: BeerController;
   let mockRequest: Request;
   let mockResponse: Response;
   let mockNext: jest.Mock;
-  let mockRepo: Repository<Pubs>;
+  let mockRepo: Repository<Beer>;
   let mockError: Error;
 
   beforeEach(() => {
@@ -30,13 +30,13 @@ describe('Given BeerController class', () => {
         getById: jest.fn().mockResolvedValue({}),
         create: jest.fn().mockResolvedValue({ id: 'newId', name: 'New Beer' }),
         delete: jest.fn(),
-      } as unknown as PubsMongoRepo;
+      } as unknown as BeerMongoRepo;
 
-      controller = new PubsController(mockRepo);
+      controller = new BeerController(mockRepo);
     });
 
     test('get all should respond with expected data', async () => {
-      await controller.getAll(mockRequest, mockResponse, mockNext);
+      await controller.getAll(mockRequest, mockResponse);
       expect(mockResponse.json).toHaveBeenCalledWith([{}]);
     });
 
@@ -87,8 +87,8 @@ describe('Given BeerController class', () => {
       mockRepo = {
         getById: jest.fn().mockRejectedValue(mockError),
         create: jest.fn().mockRejectedValue(mockError),
-      } as unknown as PubsMongoRepo;
-      controller = new PubsController(mockRepo);
+      } as unknown as BeerMongoRepo;
+      controller = new BeerController(mockRepo);
     });
 
     test('getById should respond with the expected ERROR data', async () => {

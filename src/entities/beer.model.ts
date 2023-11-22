@@ -4,4 +4,5 @@ export type Beer = {
   brewer: string;
   style: string;
   alcohol: string;
+  probada: string;
 };
