@@ -13,8 +13,8 @@ const controller = new PubsController(repo);
 
 pubsRouter.get('/', controller.getAll.bind(controller));
 pubsRouter.get('/:id', controller.getById.bind(controller));
-pubsRouter.post('/', controller.create.bind(controller));
+pubsRouter.post('/add', controller.create.bind(controller));
 pubsRouter.patch('/:id', controller.update.bind(controller));
-pubsRouter.patch('addUser/:id', controller.update.bind(controller));
+pubsRouter.patch('addpubs/:id', controller.update.bind(controller));
 pubsRouter.patch('removeUser/:id', controller.update.bind(controller));
 pubsRouter.delete('/:id', controller.delete.bind(controller));

@@ -12,9 +12,16 @@ export class UsersMongoRepo implements Repository<User> {
   }
 
   async login(loginUser: LoginUser): Promise<User[]> {
-    const result = await UserModel.find({ email: loginUser.email }).exec();
-    if (!result) throw new HttpError(401, 'Unauthorized');
-    return result;
+    const results = await UserModel.find({ email: loginUser.email }).exec();
+    if (!results || results.length === 0) {
+      throw new HttpError(401, 'Unauthorized');
+    }
+
+    if (results[0].password !== loginUser.password) {
+      throw new HttpError(401, 'Unauthorized');
+    }
+
+    return results;
   }
 
   async create(newItem: Omit<User, 'id'>): Promise<User> {
