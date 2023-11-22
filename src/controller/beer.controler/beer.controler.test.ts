@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import { BeerController } from './beer.controler';
-import { BeerFileRepo } from '../repos/beer.file.repo.js';
-import { Repository } from '../repos/repo';
-import { Beer } from '../entities/beer.model';
+import { Repository } from '../../repos/repo';
+import { Beer } from '../../entities/beer.model';
+import { BeerMongoRepo } from '../../repos/beer/beer.mongo.repo';
 
 describe('Given BeerController class', () => {
   let controller: BeerController;
@@ -30,7 +30,7 @@ describe('Given BeerController class', () => {
         getById: jest.fn().mockResolvedValue({}),
         create: jest.fn().mockResolvedValue({ id: 'newId', name: 'New Beer' }),
         delete: jest.fn(),
-      } as unknown as BeerFileRepo;
+      } as unknown as BeerMongoRepo;
 
       controller = new BeerController(mockRepo);
     });
@@ -87,7 +87,7 @@ describe('Given BeerController class', () => {
       mockRepo = {
         getById: jest.fn().mockRejectedValue(mockError),
         create: jest.fn().mockRejectedValue(mockError),
-      } as unknown as BeerFileRepo;
+      } as unknown as BeerMongoRepo;
       controller = new BeerController(mockRepo);
     });
 

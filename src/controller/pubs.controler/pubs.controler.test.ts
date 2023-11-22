@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import { Repository } from '../repos/repo';
-import { Pubs } from '../entities/pubs.model';
-import { PubsMongoRepo } from '../repos/pubs.mongo.repo';
+import { Repository } from '../../repos/repo';
+import { Pubs } from '../../entities/pubs.model';
+import { PubsMongoRepo } from '../../repos/pubs/pubs.mongo.repo';
 import { PubsController } from './pubs.controler';
 
 describe('Given BeerController class', () => {
