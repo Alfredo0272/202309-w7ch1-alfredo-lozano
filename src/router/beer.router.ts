@@ -1,7 +1,7 @@
 import { Router as createRouter } from 'express';
 import createDebug from 'debug';
 import { BeerController } from '../controller/beer.controler.js';
-import { BeerFileRepo } from '../repos/beer.file.repo.js';
+import { BeerFileRepo } from '../repos/beer/beer.file.repo.js';
 
 const debug = createDebug('W7E:beer:router');
 

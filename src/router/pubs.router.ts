@@ -1,6 +1,6 @@
 import { Router as createRouter } from 'express';
 import createDebug from 'debug';
-import { PubsMongoRepo } from '../repos/pubs.mongo.repo.js';
+import { PubsMongoRepo } from '../repos/pubs/pubs.mongo.repo.js';
 import { PubsController } from '../controller/pubs.controler.js';
 
 const debug = createDebug('W7E:beer:router');

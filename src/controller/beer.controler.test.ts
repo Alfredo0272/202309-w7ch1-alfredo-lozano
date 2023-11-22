@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { BeerController } from './beer.controler';
-import { BeerFileRepo } from '../repos/beer.file.repo.js';
+import { BeerFileRepo } from '../repos/beer/beer.file.repo.js';
 import { Repository } from '../repos/repo';
 import { Beer } from '../entities/beer.model';
 

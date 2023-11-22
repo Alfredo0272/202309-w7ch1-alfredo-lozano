@@ -1,8 +1,8 @@
-import { Repository } from './repo';
-import { HttpError } from '../types/http.error.js';
+import { Repository } from '../repo';
+import { HttpError } from '../../types/http.error.js';
 import createDebug from 'debug';
 import fs from 'fs/promises';
-import { Beer } from '../entities/beer.model.js';
+import { Beer } from '../../entities/beer.model.js';
 
 const debug = createDebug('W7E:beer:file:repo');
 

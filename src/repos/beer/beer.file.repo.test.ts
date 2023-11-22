@@ -1,4 +1,4 @@
-import { Beer } from '../entities/beer.model.js';
+import { Beer } from '../../entities/beer.model.js';
 import { BeerFileRepo } from './beer.file.repo.js';
 import fs from 'fs/promises';
 

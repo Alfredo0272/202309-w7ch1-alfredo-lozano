@@ -1,7 +1,7 @@
 import fs from 'fs/promises';
-import { Pubs } from '../entities/pubs.model.js';
-import { Repository } from './repo';
-import { HttpError } from '../types/http.error.js';
+import { Pubs } from '../../entities/pubs.model.js';
+import { Repository } from '../repo.js';
+import { HttpError } from '../../types/http.error.js';
 import createDebug from 'debug';
 import { PubsModel } from './pubs.mongo.model.js';
 
