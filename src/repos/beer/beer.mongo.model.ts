@@ -1,5 +1,4 @@
 import { Schema, model } from 'mongoose';
-
 import { Beer } from '../../entities/beer.model';
 
 export const BeersSchema = new Schema<Beer>({
@@ -23,18 +22,15 @@ export const BeersSchema = new Schema<Beer>({
     required: true,
     unique: false,
   },
-  autor: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: 'User',
-    },
-  ],
-  probada: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: 'User',
-    },
-  ],
+  autor: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+  },
+  probada: {
+    type: Boolean,
+    required: false,
+    unique: false,
+  },
 });
 export const BeerModel = model('Beers', BeersSchema, 'beers');
 

@@ -5,11 +5,27 @@ import { UserModel } from './users.mongo.model.js';
 import { HttpError } from '../../types/http.error.js';
 import { Auth } from '../../services/auth.js';
 
-const debug = createDebug('W7E:trips:mongo:repo');
+const debug = createDebug('W7E:Users:mongo:repo');
 
 export class UsersMongoRepo implements Repository<User> {
   constructor() {
     debug('istantiated');
+  }
+
+  async search({
+    key,
+    value,
+  }: {
+    key: keyof User;
+    value: any;
+  }): Promise<User[]> {
+    const result = await UserModel.find({ [key]: value })
+      .populate('author', {
+        notes: 0,
+      })
+      .exec();
+
+    return result;
   }
 
   async login(loginUser: LoginUser): Promise<User[]> {

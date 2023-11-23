@@ -1,3 +1,6 @@
+import { Pubs } from './pubs.model';
+import { Beer } from './beer.model';
+
 export type LoginUser = {
   password: string;
   email: string;
@@ -9,6 +12,6 @@ export type User = LoginUser & {
   surname: string;
   age: number;
   userNane: string;
-  visitado: [];
-  probada: [];
+  visitado: Pubs[];
+  probada: Beer[];
 };

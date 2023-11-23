@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import { BeerController } from './beer.controler';
-import { Repository } from '../../repos/repo';
-import { Beer } from '../../entities/beer.model';
-import { BeerMongoRepo } from '../../repos/beer/beer.mongo.repo';
+import { BeerController } from './beer.controler.js';
+import { Repository } from '../../repos/repo.js';
+import { Beer } from '../../entities/beer.model.js';
+import { BeerMongoRepo } from '../../repos/beer/beer.mongo.repo.js';
 
 describe('Given BeerController class', () => {
   let controller: BeerController;
@@ -28,6 +28,7 @@ describe('Given BeerController class', () => {
       mockRepo = {
         getAll: jest.fn().mockResolvedValue([{}]),
         getById: jest.fn().mockResolvedValue({}),
+        search: jest.fn().mockResolvedValue({}),
         create: jest.fn().mockResolvedValue({ id: 'newId', name: 'New Beer' }),
         delete: jest.fn(),
       } as unknown as BeerMongoRepo;
@@ -46,7 +47,7 @@ describe('Given BeerController class', () => {
     });
 
     test('create should return new data', async () => {
-      const mockBeer = { id: 'newId', name: 'New Beer' };
+      const mockBeer = 'newId';
       mockRequest.body = mockBeer;
 
       await controller.create(mockRequest, mockResponse, mockNext);

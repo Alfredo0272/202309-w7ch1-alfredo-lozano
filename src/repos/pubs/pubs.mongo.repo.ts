@@ -4,11 +4,27 @@ import createDebug from 'debug';
 import { PubsModel } from './pubs.mongo.model.js';
 import { Pubs } from '../../entities/pubs.model.js';
 
-const debug = createDebug('W7E:trips:mongo:repo');
+const debug = createDebug('W7E:Pubs:mongo:repo');
 
 export class PubsMongoRepo implements Repository<Pubs> {
   constructor() {
     debug('instantiated');
+  }
+
+  async search({
+    key,
+    value,
+  }: {
+    key: keyof Pubs;
+    value: any;
+  }): Promise<Pubs[]> {
+    const result = await PubsModel.find({ [key]: value })
+      .populate('author', {
+        notes: 0,
+      })
+      .exec();
+
+    return result;
   }
 
   async getAll(): Promise<Pubs[]> {
@@ -33,7 +49,9 @@ export class PubsMongoRepo implements Repository<Pubs> {
   async update(id: string, updatedItem: Partial<Pubs>): Promise<Pubs> {
     const result = await PubsModel.findByIdAndUpdate(id, updatedItem, {
       new: true,
-    });
+    })
+      .populate('User', { name: 1 })
+      .exec();
     if (!result) {
       throw new HttpError(404, 'Not Found', 'Update not Possible');
     }

@@ -20,6 +20,18 @@ export class PubsController {
     }
   }
 
+  async search(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = await this.repo.search({
+        key: Object.entries(req.query)[0][0] as keyof Pubs,
+        value: Object.entries(req.query)[0][1],
+      });
+      res.json(result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async getById(req: Request, res: Response, next: NextFunction) {
     try {
       const result = await this.repo.getById(req.params.id);
@@ -31,7 +43,7 @@ export class PubsController {
 
   async create(req: Request, res: Response, next: NextFunction) {
     try {
-      const result = await this.repo.create(req.body);
+      const result = await this.repo.create(req.body.id);
       res.status(201);
       res.statusMessage = 'Created';
       res.json(result);
@@ -42,7 +54,7 @@ export class PubsController {
 
   async update(req: Request, res: Response, next: NextFunction) {
     try {
-      const result = await this.repo.update(req.params.id, req.body);
+      const result = await this.repo.update(req.params.id, req.body.id);
       res.json(result);
     } catch (error) {
       next(error);

@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import { Repository } from '../../repos/repo';
-import { Pubs } from '../../entities/pubs.model';
-import { PubsMongoRepo } from '../../repos/pubs/pubs.mongo.repo';
-import { PubsController } from './pubs.controler';
+import { Repository } from '../../repos/repo.js';
+import { Pubs } from '../../entities/pubs.model.js';
+import { PubsMongoRepo } from '../../repos/pubs/pubs.mongo.repo.js';
+import { PubsController } from './pubs.controler.js';
 
 describe('Given BeerController class', () => {
   let controller: PubsController;
@@ -28,6 +28,7 @@ describe('Given BeerController class', () => {
       mockRepo = {
         getAll: jest.fn().mockResolvedValue([{}]),
         getById: jest.fn().mockResolvedValue({}),
+        serach: jest.fn().mockResolvedValue({}),
         create: jest.fn().mockResolvedValue({ id: 'newId', name: 'New Beer' }),
         delete: jest.fn(),
       } as unknown as PubsMongoRepo;
