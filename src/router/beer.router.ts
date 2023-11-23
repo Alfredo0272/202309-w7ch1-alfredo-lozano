@@ -13,12 +13,17 @@ const repo = new BeerMongoRepo();
 const controller = new BeerController(repo);
 const interceptor = new Interceptor();
 
-beerRouter.get('/', controller.getAll.bind(controller));
+beerRouter.get(
+  '/',
+  interceptor.authorization.bind(interceptor),
+  controller.getAll.bind(controller)
+);
 beerRouter.get('/:id', controller.getById.bind(controller));
 beerRouter.get('/search', controller.search.bind(controller));
 beerRouter.post(
   '/add',
-  interceptor.authentication.bind(interceptor),
+  interceptor.authorization.bind(interceptor),
+  interceptor.authenticationBeer.bind(interceptor),
   controller.create.bind(controller)
 );
 beerRouter.patch('/:id', controller.update.bind(controller));

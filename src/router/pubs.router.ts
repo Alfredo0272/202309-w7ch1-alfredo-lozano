@@ -13,12 +13,16 @@ const repo = new PubsMongoRepo();
 const controller = new PubsController(repo);
 const interceptor = new Interceptor();
 
-pubsRouter.get('/', controller.getAll.bind(controller));
+pubsRouter.get(
+  '/',
+  interceptor.authorization.bind(interceptor),
+  controller.getAll.bind(controller)
+);
 pubsRouter.get('/:id', controller.getById.bind(controller));
 pubsRouter.get('/search', controller.search.bind(controller));
 pubsRouter.post(
   '/add',
-  interceptor.authentication.bind(interceptor),
+  interceptor.authorization.bind(interceptor),
   controller.create.bind(controller)
 );
 pubsRouter.patch('/:id', controller.update.bind(controller));

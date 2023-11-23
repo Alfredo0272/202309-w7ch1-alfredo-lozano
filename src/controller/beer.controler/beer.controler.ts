@@ -39,7 +39,8 @@ export class BeerController {
 
   async create(req: Request, res: Response, next: NextFunction) {
     try {
-      const result = await this.repo.create(req.body.id);
+      req.body.autor = { id: req.body.userID };
+      const result = await this.repo.create(req.body);
       res.status(201);
       res.statusMessage = 'Created';
       res.json(result);
