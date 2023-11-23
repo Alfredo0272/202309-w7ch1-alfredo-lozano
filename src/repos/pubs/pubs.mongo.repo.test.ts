@@ -1,35 +1,35 @@
-import fs from 'fs/promises';
+import { PubsModel } from './pubs.mongo.model.js';
 import { PubsMongoRepo } from './pubs.mongo.repo';
-import { PubsModel } from './pubs.mongo.model';
+jest.mock('./pubs.mongo.model.js');
 
-jest.mock('fs/promises');
-
-describe('Given PubsMongoRepo class', () => {
+describe('When...', () => {
+  // eslint-disable-next-line no-unused-vars
   let repo: PubsMongoRepo;
+  describe('When we instantiate it without errors', () => {
+    let repo: PubsMongoRepo;
+    const exec = jest.fn().mockResolvedValue('Test');
 
-  beforeEach(() => {
-    const mockData = '[{"name": "Test"}]';
-    fs.readFile = jest.fn().mockResolvedValue(mockData);
-    fs.writeFile = jest.fn();
-    repo = new PubsMongoRepo();
-  });
+    beforeEach(() => {
+      PubsModel.find = jest.fn().mockReturnValue({
+        exec,
+      });
+      PubsModel.findById = jest.fn().mockReturnValue({
+        populate: jest.fn().mockReturnValue({
+          exec,
+        }),
+      });
 
-  test('should instantiate PubsMongoRepo without errors', () => {
-    expect(repo).toBeInstanceOf(PubsMongoRepo);
-  });
+      repo = new PubsMongoRepo();
+    });
 
-  test('should return a Pubs object when given a valid id', async () => {
-    const mockId = '';
-    const pubsWithMockId = {
-      id: mockId,
-      name: 'Mock Pubs',
-      owner: 'mock pepe',
-      direction: 'mock direction',
-    };
-    jest.spyOn(PubsModel, 'findById').mockResolvedValueOnce(pubsWithMockId);
-    const result = await repo.getById(mockId);
+    test('Then it should execute getAll', async () => {
+      const result = await repo.getAll();
+      expect(result).toBe('Test');
+    });
 
-    expect(result).toEqual(pubsWithMockId);
-    expect(PubsModel.findById).toHaveBeenCalledWith(mockId);
+    test('Then it should execute getById', async () => {
+      const result = await repo.getById('');
+      expect(result).toBe('Test');
+    });
   });
 });
