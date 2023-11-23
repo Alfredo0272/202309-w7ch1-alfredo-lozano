@@ -2,8 +2,8 @@ import { Repository } from '../repo';
 import { HttpError } from '../../types/http.error.js';
 import createDebug from 'debug';
 import { BeerModel } from './beer.mongo.model.js';
-import { Beer } from '../../entities/beer.model';
-import { UsersMongoRepo } from '../users/user.mongo.repo';
+import { Beer } from '../../entities/beer.model.js';
+import { UsersMongoRepo } from '../users/user.mongo.repo.js';
 
 const debug = createDebug('W7E:beer:mongo:repo');
 
@@ -13,6 +13,22 @@ export class BeerMongoRepo implements Repository<Beer> {
   constructor() {
     this.userRepo = new UsersMongoRepo();
     debug('Instantiated');
+  }
+
+  async search({
+    key,
+    value,
+  }: {
+    key: keyof Beer;
+    value: any;
+  }): Promise<Beer[]> {
+    const result = await BeerModel.find({ [key]: value })
+      .populate('author', {
+        notes: 0,
+      })
+      .exec();
+
+    return result;
   }
 
   async getAll(): Promise<Beer[]> {
@@ -27,13 +43,12 @@ export class BeerMongoRepo implements Repository<Beer> {
   }
 
   async create(newItem: Omit<Beer, 'id'>): Promise<Beer> {
-    const user = await this.userRepo.getById(newItem.autor);
-    if (!user) {
-      throw new HttpError(404, 'Not Found', 'User not found');
-    }
-
-    newItem.autor = user.id;
-    const result: Beer = await BeerModel.create(newItem);
+    const userID = newItem.autor.id;
+    await this.userRepo.getById(userID);
+    const result: Beer = await BeerModel.create({
+      ...newItem,
+      autor: userID,
+    });
     return result;
   }
 

@@ -12,6 +12,22 @@ export class UsersMongoRepo implements Repository<User> {
     debug('istantiated');
   }
 
+  async search({
+    key,
+    value,
+  }: {
+    key: keyof User;
+    value: any;
+  }): Promise<User[]> {
+    const result = await UserModel.find({ [key]: value })
+      .populate('author', {
+        notes: 0,
+      })
+      .exec();
+
+    return result;
+  }
+
   async login(loginUser: LoginUser): Promise<User[]> {
     const results = await UserModel.find({ email: loginUser.email }).exec();
     if (

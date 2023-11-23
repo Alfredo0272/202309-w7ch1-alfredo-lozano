@@ -13,6 +13,7 @@ const controller = new BeerController(repo);
 
 beerRouter.get('/', controller.getAll.bind(controller));
 beerRouter.get('/:id', controller.getById.bind(controller));
+beerRouter.get('/search', controller.search.bind(controller));
 beerRouter.post('/add', controller.create.bind(controller));
 beerRouter.patch('/:id', controller.update.bind(controller));
 beerRouter.patch('addUser/:id', controller.update.bind(controller));

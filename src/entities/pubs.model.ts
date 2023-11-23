@@ -3,5 +3,5 @@ export type Pubs = {
   name: string;
   direction: string;
   owner: string;
-  visitado: string;
+  visitado: Boolean;
 };
