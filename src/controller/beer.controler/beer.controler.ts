@@ -3,7 +3,7 @@ import createDebug from 'debug';
 import { Repository } from '../../repos/repo.js';
 import { Beer } from '../../entities/beer.model.js';
 
-const debug = createDebug('W7E:tasks:controller');
+const debug = createDebug('W7E:beer:controller');
 
 export class BeerController {
   // eslint-disable-next-line no-unused-vars
@@ -39,7 +39,7 @@ export class BeerController {
 
   async create(req: Request, res: Response, next: NextFunction) {
     try {
-      const result = await this.repo.create(req.body);
+      const result = await this.repo.create(req.body.id);
       res.status(201);
       res.statusMessage = 'Created';
       res.json(result);

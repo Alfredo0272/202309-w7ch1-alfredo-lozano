@@ -47,7 +47,7 @@ describe('Given BeerController class', () => {
     });
 
     test('create should return new data', async () => {
-      const mockBeer = { id: 'newId', name: 'New Beer' };
+      const mockBeer = 'newId';
       mockRequest.body = mockBeer;
 
       await controller.create(mockRequest, mockResponse, mockNext);

@@ -4,7 +4,7 @@ import createDebug from 'debug';
 import { PubsModel } from './pubs.mongo.model.js';
 import { Pubs } from '../../entities/pubs.model.js';
 
-const debug = createDebug('W7E:trips:mongo:repo');
+const debug = createDebug('W7E:Pubs:mongo:repo');
 
 export class PubsMongoRepo implements Repository<Pubs> {
   constructor() {
