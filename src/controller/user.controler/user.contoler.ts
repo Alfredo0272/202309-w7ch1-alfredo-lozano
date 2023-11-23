@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import createDebug from 'debug';
 import { UsersMongoRepo } from '../../repos/users/user.mongo.repo.js';
 import { User } from '../../entities/user.model.js';
+import { Auth } from '../../services/auth.js';
 
 const debug = createDebug('W7E:users:controller');
 
@@ -55,9 +56,17 @@ export class UsersController {
   async login(req: Request, res: Response, next: NextFunction) {
     try {
       const result = await this.repo.login(req.body);
+
+      const data = {
+        user: result[0],
+        token: Auth.signJWT({
+          id: result[0].id,
+          email: result[0].email,
+        }),
+      };
       res.status(202);
       res.statusMessage = 'Accepted';
-      res.json(result);
+      res.json(data);
     } catch (error) {
       next(error);
     }
