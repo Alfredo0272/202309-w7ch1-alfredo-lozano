@@ -32,7 +32,7 @@ export class UsersMongoRepo implements Repository<User> {
     const results = await UserModel.find({ email: loginUser.email }).exec();
     if (
       !results ||
-      (await Auth.compare(loginUser.password, results[0].password))
+      !(await Auth.compare(loginUser.password, results[0].password))
     ) {
       throw new HttpError(401, 'Unauthorized');
     }

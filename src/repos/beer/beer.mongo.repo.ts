@@ -4,6 +4,7 @@ import createDebug from 'debug';
 import { BeerModel } from './beer.mongo.model.js';
 import { Beer } from '../../entities/beer.model.js';
 import { UsersMongoRepo } from '../users/user.mongo.repo.js';
+import mongoose from 'mongoose';
 
 const debug = createDebug('W7E:beer:mongo:repo');
 
@@ -63,7 +64,20 @@ export class BeerMongoRepo implements Repository<Beer> {
   }
 
   async delete(id: string): Promise<void> {
-    const result = await BeerModel.findByIdAndDelete(id);
-    if (!result) throw new HttpError(404, 'Not Found', 'Delete not possible');
+    const result = await BeerModel.findByIdAndDelete(id)
+      .populate('author', {
+        beer: 0,
+      })
+      .exec();
+    if (!result) {
+      throw new HttpError(404, 'Not Found', 'Delete not possible');
+    }
+
+    const userID = result.autor.id;
+    const user = await this.userRepo.getById(userID);
+    user.probada = user.probada.filter((item) => {
+      const itemID = item as unknown as mongoose.mongo.ObjectId;
+      return itemID.toString() !== id;
+    });
   }
 }

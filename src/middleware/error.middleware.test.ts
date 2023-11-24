@@ -1,23 +1,77 @@
 import { NextFunction, Request, Response } from 'express';
 import { HttpError } from '../types/http.error';
-import { errorMiddleware } from './error.middleware';
+import mongoose, { mongo } from 'mongoose';
+import { handleError } from './error.middleware.js';
 
 describe('Given the handleError middleware', () => {
-  describe('When it is instantiated', () => {
-    const error = new HttpError(404, 'Not found', 'The request was not found');
+  describe('When it is instantiate', () => {
     const req = {} as Request;
     const res = {
       status: jest.fn(),
       send: jest.fn(),
-      json: jest.fn().mockResolvedValue({}),
     } as unknown as Response;
     const next = jest.fn() as NextFunction;
 
-    test('When it is instantiated with a HttpError, then it should set a status, a statusMessage, and an error object', async () => {
-      await errorMiddleware(error, req, res, next);
+    const mockConsoleError = jest.fn();
 
-      expect(res.status).toHaveBeenCalledWith(404);
+    beforeAll(() => {
+      global.console.error = mockConsoleError;
+    });
+
+    test('When it is instantiate with a HttpError, then it should set a status, a statusMessage and an error object', () => {
+      const error = new HttpError(
+        404,
+        'Not found',
+        'The request was not found'
+      );
+
+      handleError(error, req, res, next);
+      expect(res.status).toHaveBeenCalled();
+      expect(res.send).toHaveBeenCalled();
       expect(next).not.toHaveBeenCalled();
+      expect(mockConsoleError).toHaveBeenCalledWith(
+        error.status,
+        error.statusMessage,
+        error.message
+      );
+    });
+
+    test('When it is not instantiate with a HttpError, it should set status to 500 and call the send method with an error object', () => {
+      const error = new Error('Error');
+
+      handleError(error, req, res, next);
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.send).toHaveBeenCalledWith({ error: 'Error' });
+      expect(next).not.toHaveBeenCalled();
+      expect(mockConsoleError).toHaveBeenCalledWith(error);
+    });
+
+    test('When it is instantiate with a mongoose.Error.ValidationError, then it should set a status, a statusMessage and an error object', () => {
+      const error = new mongoose.Error.ValidationError();
+
+      handleError(error, req, res, next);
+      expect(res.status).toHaveBeenCalled();
+      expect(res.send).toHaveBeenCalled();
+      expect(next).not.toHaveBeenCalled();
+      expect(mockConsoleError).toHaveBeenCalledWith(
+        '400 Bad Request',
+        error.message
+      );
+    });
+
+    test('When it is instantiate with a mongo.MongoServerError, then it should set a status, a statusMessage and an error object', () => {
+      const error = new mongo.MongoServerError({
+        ErrorDescription: 'MongoDB server error',
+      });
+
+      handleError(error, req, res, next);
+      expect(res.status).toHaveBeenCalled();
+      expect(res.send).toHaveBeenCalled();
+      expect(next).not.toHaveBeenCalled();
+      expect(mockConsoleError).toHaveBeenCalledWith(
+        '406 Not accepted',
+        error.message
+      );
     });
   });
 });

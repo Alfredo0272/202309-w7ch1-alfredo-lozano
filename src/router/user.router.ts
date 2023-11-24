@@ -13,4 +13,4 @@ const controller = new UsersController(repo);
 usersRouter.get('/', controller.getAll.bind(controller));
 usersRouter.get('/search', controller.search.bind(controller));
 usersRouter.post('/register', controller.create.bind(controller));
-usersRouter.post('/login', controller.login.bind(controller));
+usersRouter.post('/loggin', controller.login.bind(controller));
