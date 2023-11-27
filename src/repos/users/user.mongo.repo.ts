@@ -57,9 +57,10 @@ export class UsersMongoRepo implements Repository<User> {
     return result;
   }
 
-  async create(newData: Omit<User, 'id'>): Promise<User> {
-    const data = await UserModel.create(newData);
-    return data;
+  async create(newItem: Omit<User, 'id'>): Promise<User> {
+    newItem.password = await Auth.hash(newItem.password);
+    const result: User = await UserModel.create(newItem);
+    return result;
   }
 
   async update(id: string, newData: Partial<User>): Promise<User> {
