@@ -1,13 +1,18 @@
 import { Request, Response } from 'express';
 import { UsersController } from './user.contoler.js';
 import { UsersMongoRepo } from '../../repos/users/user.mongo.repo.js';
+import { User } from '../../entities/user.model.js';
 
-describe('Given UsersController class', () => {
-  let controller: UsersController;
+jest.mock('../../services/auth');
+
+describe('UsersController', () => {
   let mockRequest: Request;
   let mockResponse: Response;
   let mockNext: jest.Mock;
-  beforeEach(() => {
+  let mockRepo: jest.Mocked<UsersMongoRepo>;
+  let controller: UsersController;
+
+  beforeAll(() => {
     mockRequest = {
       body: {},
       params: {},
@@ -19,24 +24,24 @@ describe('Given UsersController class', () => {
     } as unknown as Response;
     mockNext = jest.fn();
   });
+  beforeEach(() => {
+    mockRepo = {
+      getAll: jest.fn().mockResolvedValue([{}]),
+      getById: jest.fn().mockResolvedValue({}),
+      search: jest.fn().mockResolvedValue([{}]),
+      create: jest.fn().mockResolvedValue({}),
+      update: jest.fn().mockResolvedValue({}),
+      addFriend: jest.fn().mockResolvedValue({}),
+      addEnemy: jest.fn().mockResolvedValue({}),
+      delete: jest.fn().mockResolvedValue(undefined),
+      login: jest.fn().mockResolvedValue({}),
+    } as unknown as jest.Mocked<UsersMongoRepo>;
 
-  describe('When we instantiate it without errors', () => {
-    beforeEach(() => {
-      const mockRepo = {
-        getAll: jest.fn().mockResolvedValue([{}]),
-        getById: jest.fn().mockResolvedValue({}),
-        search: jest.fn().mockResolvedValue([{}]),
-        create: jest.fn().mockResolvedValue({}),
-        update: jest.fn().mockResolvedValue({}),
-        addFriend: jest.fn().mockResolvedValue({}),
-        addEnemy: jest.fn().mockResolvedValue({}),
-        delete: jest.fn().mockResolvedValue(undefined),
-      } as unknown as UsersMongoRepo;
+    controller = new UsersController(mockRepo);
+  });
 
-      controller = new UsersController(mockRepo);
-    });
-
-    test('Then login should return user data and token', async () => {
+  describe('login method', () => {
+    test('should return user data and token for a valid user', async () => {
       const mockRequestWithUserId = {
         body: { userId: 'someUserId' },
         params: {},
@@ -56,28 +61,35 @@ describe('Given UsersController class', () => {
 
       expect(mockResponseWithUserId.json).toHaveBeenCalled();
     });
-    describe('When we instantiate it WITH errors', () => {
-      let mockError: Error;
-      beforeEach(() => {
-        mockError = new Error('Mock error');
-        const mockRepo = {
-          getAll: jest.fn().mockRejectedValue(mockError),
-          getById: jest.fn().mockRejectedValue(mockError),
-          search: jest.fn().mockRejectedValue(mockError),
-          create: jest.fn().mockRejectedValue(mockError),
-          update: jest.fn().mockRejectedValue(mockError),
-          addPub: jest.fn().mockRejectedValue(mockError),
-          addBeer: jest.fn().mockRejectedValue(mockError),
-          delete: jest.fn().mockRejectedValue(mockError),
-          login: jest.fn().mockRejectedValue(mockError),
-        } as unknown as UsersMongoRepo;
 
-        controller = new UsersController(mockRepo);
+    test('should successfully authenticate with valid credentials and return user data and token', async () => {
+      const mockRequest = {
+        body: {
+          email: 'test@example.com',
+          password: 'password123',
+        },
+      } as unknown as Request;
+      const mockUser = { email: 'pepe', password: 'abcd' } as unknown as User;
+      mockRepo.login.mockResolvedValueOnce(mockUser);
+      await controller.login(mockRequest, mockResponse, mockNext);
+      expect(mockRepo.login).toHaveBeenCalledWith({
+        email: 'test@example.com',
+        password: 'password123',
       });
-      test('Then login should ...', async () => {
-        await controller.login(mockRequest, mockResponse, mockNext);
-        expect(mockNext).toHaveBeenLastCalledWith(mockError);
+      expect(mockResponse.status).toHaveBeenCalledWith(202);
+      expect(mockResponse.json).toHaveBeenCalledWith({
+        user: mockUser,
       });
+    });
+  });
+  describe('other methods', () => {
+    test('should handle errors during login', async () => {
+      const mockError = new Error('Mock error');
+      mockRepo.login.mockRejectedValueOnce(mockError);
+
+      await controller.login(mockRequest, mockResponse, mockNext);
+
+      expect(mockNext).toHaveBeenCalledWith(mockError);
     });
   });
 });

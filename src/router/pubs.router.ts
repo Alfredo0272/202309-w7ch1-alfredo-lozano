@@ -18,14 +18,37 @@ pubsRouter.get(
   interceptor.authorization.bind(interceptor),
   controller.getAll.bind(controller)
 );
-pubsRouter.get('/:id', controller.getById.bind(controller));
-pubsRouter.get('/search', controller.search.bind(controller));
+pubsRouter.get(
+  '/:id',
+  interceptor.authorization.bind(interceptor),
+  controller.getById.bind(controller)
+);
+pubsRouter.get(
+  '/search',
+  interceptor.authorization.bind(interceptor),
+  controller.search.bind(controller)
+);
 pubsRouter.post(
   '/add',
   interceptor.authorization.bind(interceptor),
+  interceptor.authentication.bind(interceptor),
   controller.create.bind(controller)
 );
-pubsRouter.patch('/:id', controller.update.bind(controller));
-pubsRouter.patch('addpubs/:id', controller.update.bind(controller));
-pubsRouter.patch('removeUser/:id', controller.update.bind(controller));
-pubsRouter.delete('/:id', controller.delete.bind(controller));
+pubsRouter.patch(
+  '/:id',
+  interceptor.authorization.bind(interceptor),
+  interceptor.authentication.bind(interceptor),
+  controller.update.bind(controller)
+);
+pubsRouter.patch(
+  'addpubs/:id',
+  interceptor.authorization.bind(interceptor),
+  interceptor.authentication.bind(interceptor),
+  controller.update.bind(controller)
+);
+pubsRouter.delete(
+  '/:id',
+  interceptor.authorization.bind(interceptor),
+  interceptor.authentication.bind(interceptor),
+  controller.delete.bind(controller)
+);

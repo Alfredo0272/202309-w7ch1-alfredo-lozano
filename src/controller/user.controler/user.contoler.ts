@@ -51,4 +51,22 @@ export class UsersController extends Controller<User> {
       next(error);
     }
   }
+
+  async removeBeer(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = await this.repo.removeBeer(req.params.id, req.body.userId);
+      res.json(result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async removePub(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = await this.repo.removePub(req.params.id, req.body.userId);
+      res.json(result);
+    } catch (error) {
+      next(error);
+    }
+  }
 }

@@ -3,12 +3,12 @@ import { UserLogin, User } from '../../entities/user.model.js';
 import { UserModel } from './users.mongo.model.js';
 import { HttpError } from '../../types/http.error.js';
 import { Auth } from '../../services/auth.js';
-import { Repository } from '../repo.js';
 import { Beer } from '../../entities/beer.model.js';
 import { Pubs } from '../../entities/pubs.model.js';
+import { UserRepository } from '../users.repo.js';
 
 const debug = createDebug('W7E:Users:mongo:repo');
-export class UsersMongoRepo implements Repository<User> {
+export class UsersMongoRepo implements UserRepository<User> {
   constructor() {
     debug('Instantiated');
   }
@@ -149,7 +149,6 @@ export class UsersMongoRepo implements Repository<User> {
       }
 
       if (!user.visitado.includes(pubIdToRemove as unknown as Pubs)) {
-        // El enemigo no está presente, no es necesario hacer cambios
         return user;
       }
 
@@ -182,7 +181,6 @@ export class UsersMongoRepo implements Repository<User> {
       }
 
       if (!user.probada.includes(beerIdToRemove as unknown as Beer)) {
-        // El amigo no está presente, no es necesario hacer cambios
         return user;
       }
 
@@ -198,7 +196,6 @@ export class UsersMongoRepo implements Repository<User> {
 
       return updatedUser;
     } catch (error) {
-      // Puedes manejar el error según tus necesidades
       throw error;
     }
   }

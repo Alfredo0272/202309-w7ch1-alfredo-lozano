@@ -4,7 +4,7 @@ import { HttpError } from '../../types/http.error.js';
 import { UsersMongoRepo } from './user.mongo.repo.js';
 import { UserModel } from './users.mongo.model.js';
 jest.mock('./users.mongo.model');
-
+jest.mock('../../services/auth');
 describe('Given UserMongoRepo class', () => {
   let repo: UsersMongoRepo;
   const exec = jest.fn().mockResolvedValue('name');
@@ -21,6 +21,9 @@ describe('Given UserMongoRepo class', () => {
       UserModel.create = jest
         .fn()
         .mockReturnValue({ populate: jest.fn().mockReturnValue({ exec }) });
+      UserModel.findByIdAndUpdate = jest.fn().mockReturnValue({
+        exec: jest.fn().mockResolvedValue({}),
+      });
     });
 
     test('should return a user object when a valid id is passed', async () => {
@@ -92,8 +95,7 @@ describe('Given UserMongoRepo class', () => {
         password: 'hashedPassword',
         avatar: {
           publicId: '',
-          with: 0,
-          height: 0,
+
           format: '',
           url: '',
         },
@@ -118,7 +120,6 @@ describe('Given UserMongoRepo class', () => {
       expect(result).toBe('name');
     });
     test('should create a new user with valid input data', async () => {
-      // Arrange
       const newItem: Omit<User, 'id'> = {
         name: 'John',
         surname: 'Doe',
@@ -130,8 +131,7 @@ describe('Given UserMongoRepo class', () => {
         password: 'hashedPassword',
         avatar: {
           publicId: '',
-          with: 0,
-          height: 0,
+
           format: '',
           url: '',
         },
@@ -151,6 +151,119 @@ describe('Given UserMongoRepo class', () => {
         password: hashedPassword,
       });
       expect(result).toEqual(createdUser);
+    });
+    test('should return the updated user object after adding a beer to the "probada" list', async () => {
+      const beerId = 'beerId';
+      const userId = 'userId';
+      const user = {
+        id: userId,
+        name: 'John',
+        surname: 'Doe',
+        age: 25,
+        userName: 'johndoe',
+        visitado: [],
+        probada: [],
+      };
+      const updatedUser = { ...user, probada: [beerId] };
+      UserModel.findById = jest
+        .fn()
+        .mockReturnValue({ exec: jest.fn().mockResolvedValue(user) });
+      UserModel.findByIdAndUpdate = jest
+        .fn()
+        .mockReturnValue({ exec: jest.fn().mockResolvedValue(updatedUser) });
+
+      const result = await repo.addBeer(beerId, userId);
+      expect(UserModel.findById).toHaveBeenCalledWith(userId);
+      expect(UserModel.findByIdAndUpdate).toHaveBeenCalledWith(
+        userId,
+        { $push: { probada: beerId } },
+        { new: true }
+      );
+      expect(result).toEqual(updatedUser);
+    });
+    test('should return the updated user object after adding a Pub to the "visitado" list', async () => {
+      const PubId = 'beerId';
+      const userId = 'userId';
+      const user = {
+        id: userId,
+        name: 'John',
+        surname: 'Doe',
+        age: 25,
+        userName: 'johndoe',
+        visitado: [],
+        probada: [],
+      };
+      const updatedUser = { ...user, visitado: [PubId] };
+      UserModel.findById = jest
+        .fn()
+        .mockReturnValue({ exec: jest.fn().mockResolvedValue(user) });
+      UserModel.findByIdAndUpdate = jest.fn().mockReturnValue({
+        exec: jest.fn().mockResolvedValue(updatedUser),
+      });
+
+      const result = await repo.addPub(PubId, userId);
+      expect(UserModel.findById).toHaveBeenCalledWith(userId);
+      expect(UserModel.findByIdAndUpdate).toHaveBeenCalledWith(
+        userId,
+        { $push: { visitado: PubId } },
+        { new: true }
+      );
+      expect(result).toEqual(updatedUser);
+    });
+    test("should remove a pub from a user's visited pubs list when the pub exists in the list", async () => {
+      // Arrange
+      const pubIdToRemove = 'pubId';
+      const userId = 'userId';
+      const user = {
+        id: userId,
+        name: 'John',
+        surname: 'Doe',
+        age: 25,
+        userName: 'johndoe',
+        visitado: [pubIdToRemove],
+        probada: [],
+      };
+      UserModel.findById = jest
+        .fn()
+        .mockReturnValue({ exec: jest.fn().mockResolvedValue(user) });
+      UserModel.findByIdAndUpdate = jest.fn().mockReturnValue({
+        exec: jest.fn().mockResolvedValue(user),
+      });
+      const result = await repo.removePub(pubIdToRemove, userId);
+      expect(UserModel.findById).toHaveBeenCalledWith(userId);
+      expect(UserModel.findByIdAndUpdate).toHaveBeenCalledWith(
+        userId,
+        { $pull: { visitado: pubIdToRemove } },
+        { new: true }
+      );
+      expect(result).toEqual(user);
+    });
+    test("should remove a beer from a user's visited pubs list when the pub exists in the list", async () => {
+      const beerIdToRemove = 'beerId';
+      const userId = 'userId';
+      const user = {
+        id: userId,
+        name: 'John',
+        surname: 'Doe',
+        age: 25,
+        userName: 'johndoe',
+        visitado: [],
+        probada: [beerIdToRemove],
+      };
+      UserModel.findById = jest
+        .fn()
+        .mockReturnValue({ exec: jest.fn().mockResolvedValue(user) });
+      UserModel.findByIdAndUpdate = jest.fn().mockReturnValue({
+        exec: jest.fn().mockResolvedValue(user),
+      });
+      const result = await repo.removeBeer(beerIdToRemove, userId);
+      expect(UserModel.findById).toHaveBeenCalledWith(userId);
+      expect(UserModel.findByIdAndUpdate).toHaveBeenCalledWith(
+        userId,
+        { $pull: { probada: beerIdToRemove } },
+        { new: true }
+      );
+      expect(result).toEqual(user);
     });
   });
 
@@ -202,6 +315,110 @@ describe('Given UserMongoRepo class', () => {
         exec: mockExec,
       });
       await expect(repo.delete('')).rejects.toThrow(HttpError);
+    });
+    test('should throw a 404 error if the user is not found in the database', async () => {
+      const beerId = 'beerId';
+      const userId = 'userId';
+      UserModel.findById = jest
+        .fn()
+        .mockReturnValue({ exec: jest.fn().mockResolvedValue(null) });
+      await expect(repo.addBeer(beerId, userId)).rejects.toThrow(HttpError);
+    });
+    test('should throw a 404 error if the user is not found in the database', async () => {
+      const PubId = 'beerId';
+      const userId = 'userId';
+      UserModel.findById = jest
+        .fn()
+        .mockReturnValue({ exec: jest.fn().mockResolvedValue(null) });
+      await expect(repo.addPub(PubId, userId)).rejects.toThrow(HttpError);
+    });
+    test('should not add a beer to the "probada" list if it is already in the list', async () => {
+      const PubId = 'PubId';
+      const userId = 'userId';
+      const user = {
+        id: userId,
+        name: 'John',
+        surname: 'Doe',
+        age: 25,
+        userName: 'johndoe',
+        visitado: [PubId],
+        probada: [],
+      };
+      UserModel.findById = jest
+        .fn()
+        .mockReturnValue({ exec: jest.fn().mockResolvedValue(user) });
+
+      const result = await repo.addPub(PubId, userId);
+
+      expect(UserModel.findById).toHaveBeenCalledWith(userId);
+      expect(result).toEqual(user);
+    });
+    test('should throw a HttpError with status 404 when the user does not exist', async () => {
+      const pubIdToRemove = 'pubId';
+      const userId = 'userId';
+      UserModel.findById = jest
+        .fn()
+        .mockReturnValue({ exec: jest.fn().mockResolvedValue(null) });
+      await expect(repo.removePub(pubIdToRemove, userId)).rejects.toThrow(
+        HttpError
+      );
+    });
+    test('should throw a HttpError with status 404 when the update fails', async () => {
+      // Arrange
+      const pubIdToRemove = 'pubId';
+      const userId = 'userId';
+      const user = {
+        id: userId,
+        name: 'John',
+        surname: 'Doe',
+        age: 25,
+        userName: 'johndoe',
+        visitado: [pubIdToRemove],
+        probada: [],
+      };
+      UserModel.findById = jest
+        .fn()
+        .mockReturnValue({ exec: jest.fn().mockResolvedValue(user) });
+      UserModel.findByIdAndUpdate = jest.fn().mockReturnValue({
+        exec: jest.fn().mockResolvedValue(null),
+      });
+
+      await expect(repo.removePub(pubIdToRemove, userId)).rejects.toThrow(
+        HttpError
+      );
+    });
+    test('should throw a HttpError with status 404 when the user does not exist', async () => {
+      const beerIdToRemove = 'beerId';
+      const userId = 'userId';
+      UserModel.findById = jest
+        .fn()
+        .mockReturnValue({ exec: jest.fn().mockResolvedValue(null) });
+      await expect(repo.removeBeer(beerIdToRemove, userId)).rejects.toThrow(
+        HttpError
+      );
+    });
+    test('should throw a HttpError with status 404 when the update fails', async () => {
+      const beerIdToRemove = 'beerId';
+      const userId = 'userId';
+      const user = {
+        id: userId,
+        name: 'John',
+        surname: 'Doe',
+        age: 25,
+        userName: 'johndoe',
+        visitado: [],
+        probada: [beerIdToRemove],
+      };
+      UserModel.findById = jest
+        .fn()
+        .mockReturnValue({ exec: jest.fn().mockResolvedValue(user) });
+      UserModel.findByIdAndUpdate = jest.fn().mockReturnValue({
+        exec: jest.fn().mockResolvedValue(null),
+      });
+
+      await expect(repo.removeBeer(beerIdToRemove, userId)).rejects.toThrow(
+        HttpError
+      );
     });
   });
 });
