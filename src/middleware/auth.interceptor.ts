@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { HttpError } from '../types/http.error.js';
 import createDebug from 'debug';
 import { Auth } from '../services/auth.js';
-import { BeerMongoRepo } from '../repos/beer/beer.mongo.repo.js';
+import { UsersMongoRepo } from '../repos/users/user.mongo.repo.js';
 
 const debug = createDebug(
   'W7E:Alt Rebel scum this is the interceptor:middleware'

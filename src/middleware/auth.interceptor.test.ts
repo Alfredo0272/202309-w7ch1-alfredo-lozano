@@ -29,18 +29,57 @@ describe('Given the AuthInterceptor middleware', () => {
       expect(req.body.id).toBe('someId');
       expect(next).toHaveBeenCalled();
     });
+    describe('When it is instantiated', () => {
+      const req = {
+        body: {
+          id: 'user1',
+        },
+        params: {
+          id: 'user1',
+        },
+      } as unknown as Request;
+      const res = {} as unknown as Response;
+      const next = jest.fn() as NextFunction;
+      const interceptor = new Interceptor();
+      test('should call next middleware function when user IDs match', async () => {
+        await interceptor.authentication(req, res, next);
+        expect(next).toHaveBeenCalled();
+      });
+    });
   });
+  describe('When it is instantiated with ERROR', () => {
+    describe('it should throw..', () => {
+      const req = {
+        body: {},
+        params: {
+          id: 'user1',
+        },
+      } as unknown as Request;
+      const res = {} as unknown as Response;
+      const next = jest.fn() as NextFunction;
+      const interceptor = new Interceptor();
+      test('should throw a CastError when user ID is undefined', async () => {
+        await interceptor.authentication(req, res, next);
 
+        // Assert
+        expect(next).toHaveBeenCalledWith(expect.any(Error));
+      });
+    });
+  });
   // Describe('When it is instantiated with Error', () => {
-  //   const req = {
-  //     get: jest.fn().mockReturnValueOnce('token'),
-  //     body: {},
-  //   } as unknown as Request;
-  //   const res = {} as unknown as Response;
-  //   const next = jest.fn() as NextFunction;
-  //   const interceptor = new Interceptor();
-  //   test('should unsuccessfully extract and verify token', () => {
-  //     expect(() => interceptor.authorization(req, res, next)).toThrow(
+  //   test('should unsuccessfully extract and verify token', async () => {
+  //     const req = {
+  //       get: jest.fn().mockReturnValueOnce('token'),
+  //       body: {},
+  //     } as unknown as Request;
+  //     const res = {} as unknown as Response;
+  //     const next = jest.fn() as NextFunction;
+  //     const interceptor = new Interceptor();
+
+  //     (Auth.verifyAndGetPayload as jest.Mock).mockRejectedValueOnce(
+  //       new Error('Token verification failed')
+  //     );
+  //     expect(interceptor.authorization(req, res, next)).rejects.toThrow(
   //       HttpError
   //     );
   //     expect(next).not.toHaveBeenCalled();

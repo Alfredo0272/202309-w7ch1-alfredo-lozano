@@ -90,6 +90,13 @@ describe('Given UserMongoRepo class', () => {
         probada: [],
         email: 'test@example.com',
         password: 'hashedPassword',
+        avatar: {
+          publicId: '',
+          with: 0,
+          height: 0,
+          format: '',
+          url: '',
+        },
       };
       UserModel.findOne = jest
         .fn()
@@ -121,6 +128,13 @@ describe('Given UserMongoRepo class', () => {
         probada: [],
         email: 'john.doe@example.com',
         password: 'hashedPassword',
+        avatar: {
+          publicId: '',
+          with: 0,
+          height: 0,
+          format: '',
+          url: '',
+        },
       };
       const hashedPassword = 'hashedPassword';
       const createdUser: User = {
