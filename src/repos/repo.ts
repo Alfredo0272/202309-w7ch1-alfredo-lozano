@@ -6,4 +6,9 @@ export interface Repository<X extends { id: unknown }> {
   create(_newItem: Omit<X, 'id'>): Promise<X>;
   update(_id: X['id'], _updatedItem: Partial<X>): Promise<X>;
   delete(_id: X['id']): Promise<void>;
+
+  addBeer(_BeerId: X['id'], _userId: X['id']): Promise<X>;
+  addPub(_PubId: X['id'], _userId: X['id']): Promise<X>;
+  removeBeer(_id: X['id'], _beerIdToRemove: X['id']): Promise<X>;
+  removePub(_id: X['id'], _pubIdToRemove: X['id']): Promise<X>;
 }

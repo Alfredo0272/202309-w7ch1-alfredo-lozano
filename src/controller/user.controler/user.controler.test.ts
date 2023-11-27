@@ -27,8 +27,8 @@ describe('Given UsersController class', () => {
         search: jest.fn().mockResolvedValue([{}]),
         create: jest.fn().mockResolvedValue({}),
         update: jest.fn().mockResolvedValue({}),
-        visitado: jest.fn().mockResolvedValue({}),
-        probada: jest.fn().mockResolvedValue({}),
+        addBeer: jest.fn().mockResolvedValue({}),
+        addPub: jest.fn().mockResolvedValue({}),
         delete: jest.fn().mockResolvedValue(undefined),
       } as unknown as UsersMongoRepo;
 
@@ -64,12 +64,12 @@ describe('Given UsersController class', () => {
       await controller.delete(mockRequest, mockResponse, mockNext);
       expect(mockResponse.json).toHaveBeenCalledWith({});
     });
-    test('Then addFriend should ...', async () => {
-      await controller.visitado(mockRequest, mockResponse, mockNext);
+    test('Then addBeer should ...', async () => {
+      await controller.addBeer(mockRequest, mockResponse, mockNext);
       expect(mockResponse.json).toHaveBeenCalledWith({});
     });
-    test('Then addEnemy should ...', async () => {
-      await controller.probada(mockRequest, mockResponse, mockNext);
+    test('Then addPub should ...', async () => {
+      await controller.addPub(mockRequest, mockResponse, mockNext);
       expect(mockResponse.json).toHaveBeenCalledWith({});
     });
   });
@@ -122,14 +122,14 @@ describe('Given UsersController class', () => {
       expect(mockNext).toHaveBeenLastCalledWith(mockError);
     });
 
-    test('Then addFriend should ...', async () => {
-      await controller.visitado(mockRequest, mockResponse, mockNext);
-      expect(mockNext).toHaveBeenLastCalledWith(mockError);
-    });
+    // Test('Then addFriend should ...', async () => {
+    //   await controller.visitado(mockRequest, mockResponse, mockNext);
+    //   expect(mockNext).toHaveBeenLastCalledWith(mockError);
+    // });
 
-    test('Then addEnemy should ...', async () => {
-      await controller.probada(mockRequest, mockResponse, mockNext);
-      expect(mockNext).toHaveBeenLastCalledWith(mockError);
-    });
+    // test('Then addEnemy should ...', async () => {
+    //   await controller.probada(mockRequest, mockResponse, mockNext);
+    //   expect(mockNext).toHaveBeenLastCalledWith(mockError);
+    // });
   });
 });

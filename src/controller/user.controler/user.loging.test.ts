@@ -66,8 +66,8 @@ describe('Given UsersController class', () => {
           search: jest.fn().mockRejectedValue(mockError),
           create: jest.fn().mockRejectedValue(mockError),
           update: jest.fn().mockRejectedValue(mockError),
-          addFriend: jest.fn().mockRejectedValue(mockError),
-          addEnemy: jest.fn().mockRejectedValue(mockError),
+          addPub: jest.fn().mockRejectedValue(mockError),
+          addBeer: jest.fn().mockRejectedValue(mockError),
           delete: jest.fn().mockRejectedValue(mockError),
           login: jest.fn().mockRejectedValue(mockError),
         } as unknown as UsersMongoRepo;

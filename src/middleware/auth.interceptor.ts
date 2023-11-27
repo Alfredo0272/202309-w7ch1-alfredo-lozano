@@ -28,16 +28,14 @@ export class Interceptor {
     }
   }
 
-  async authenticationBeer(req: Request, res: Response, next: NextFunction) {
+  async authentication(req: Request, res: Response, next: NextFunction) {
     try {
-      // Eres el usuario
       const userID = req.body.id;
-
-      // Quieres actuar sobre la creacion de birra
-      const beerId = req.params.id;
-      const repoBeer = new BeerMongoRepo();
-      const beer = await repoBeer.getById(beerId);
-      if (beer !== userID) throw new HttpError(401, 'Not authorirez');
+      const userToAddID = req.params.id;
+      const repoUsers = new UsersMongoRepo();
+      const user = await repoUsers.getById(userToAddID);
+      if (user.id !== userID)
+        throw new HttpError(401, 'Unauthorized', 'User not valid');
       next();
     } catch (error) {
       next(error);

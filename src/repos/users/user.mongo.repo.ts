@@ -4,6 +4,8 @@ import { UserModel } from './users.mongo.model.js';
 import { HttpError } from '../../types/http.error.js';
 import { Auth } from '../../services/auth.js';
 import { Repository } from '../repo.js';
+import { Beer } from '../../entities/beer.model.js';
+import { Pubs } from '../../entities/pubs.model.js';
 
 const debug = createDebug('W7E:Users:mongo:repo');
 export class UsersMongoRepo implements Repository<User> {
@@ -74,19 +76,130 @@ export class UsersMongoRepo implements Repository<User> {
     return data;
   }
 
-  async visitado(_id: string, _body: any) {
-    throw new Error('Method not implemented.');
-  }
-
-  async probada(_id: string, _body: any) {
-    throw new Error('Method not implemented.');
-  }
-
   async delete(id: string): Promise<void> {
     const result = await UserModel.findByIdAndDelete(id).exec();
     if (!result)
       throw new HttpError(404, 'Not Found', 'User not found in file system', {
         cause: 'Fail to delete',
       });
+  }
+
+  async addBeer(beerId: Beer['id'], userId: User['id']): Promise<User> {
+    const user = await UserModel.findById(userId).exec();
+
+    if (!user) {
+      throw new HttpError(404, 'Not Found', 'User not found');
+    }
+
+    if (user.probada.includes(beerId as unknown as Beer)) {
+      return user;
+    }
+
+    const updatedUser = await UserModel.findByIdAndUpdate(
+      userId,
+      { $push: { probada: beerId } },
+      {
+        new: true,
+      }
+    ).exec();
+
+    if (!updatedUser) {
+      throw new HttpError(404, 'Not Found', 'Update not possible');
+    }
+
+    return updatedUser;
+  }
+
+  async addPub(PubId: Pubs['id'], userId: User['id']): Promise<User> {
+    const user = await UserModel.findById(userId).exec();
+
+    if (!user) {
+      throw new HttpError(404, 'Not Found', 'User not found');
+    }
+
+    if (user.visitado.includes(PubId as unknown as Pubs)) {
+      return user;
+    }
+
+    const updatedUser = await UserModel.findByIdAndUpdate(
+      userId,
+      { $push: { visitado: PubId } },
+      {
+        new: true,
+      }
+    ).exec();
+
+    if (!updatedUser) {
+      throw new HttpError(404, 'Not Found', 'Update not possible');
+    }
+
+    return updatedUser;
+  }
+
+  async removePub(
+    pubIdToRemove: Pubs['id'],
+    userId: User['id']
+  ): Promise<User> {
+    // eslint-disable-next-line no-useless-catch
+    try {
+      const user = await UserModel.findById(userId).exec();
+
+      if (!user) {
+        throw new HttpError(404, 'Not Found', 'User not found');
+      }
+
+      if (!user.visitado.includes(pubIdToRemove as unknown as Pubs)) {
+        // El enemigo no está presente, no es necesario hacer cambios
+        return user;
+      }
+
+      const updatedUser = await UserModel.findByIdAndUpdate(
+        userId,
+        { $pull: { visitado: pubIdToRemove } },
+        { new: true }
+      ).exec();
+
+      if (!updatedUser) {
+        throw new HttpError(404, 'Not Found', 'Update not possible');
+      }
+
+      return updatedUser;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async removeBeer(
+    beerIdToRemove: Beer['id'],
+    userId: User['id']
+  ): Promise<User> {
+    // eslint-disable-next-line no-useless-catch
+    try {
+      const user = await UserModel.findById(userId).exec();
+
+      if (!user) {
+        throw new HttpError(404, 'Not Found', 'User not found');
+      }
+
+      if (!user.probada.includes(beerIdToRemove as unknown as Beer)) {
+        // El amigo no está presente, no es necesario hacer cambios
+        return user;
+      }
+
+      const updatedUser = await UserModel.findByIdAndUpdate(
+        userId,
+        { $pull: { probada: beerIdToRemove } },
+        { new: true }
+      ).exec();
+
+      if (!updatedUser) {
+        throw new HttpError(404, 'Not Found', 'Update not possible');
+      }
+
+      return updatedUser;
+    } catch (error) {
+      // Puedes manejar el error según tus necesidades
+      throw error;
+    }
   }
 }

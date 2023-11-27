@@ -34,18 +34,18 @@ export class UsersController extends Controller<User> {
     }
   }
 
-  async visitado(req: Request, res: Response, next: NextFunction) {
+  async addPub(req: Request, res: Response, next: NextFunction) {
     try {
-      const result = await this.repo.visitado(req.params.id, req.body);
+      const result = await this.repo.addPub(req.params.id, req.body);
       res.json(result);
     } catch (error) {
       next(error);
     }
   }
 
-  async probada(req: Request, res: Response, next: NextFunction) {
+  async addBeer(req: Request, res: Response, next: NextFunction) {
     try {
-      const result = await this.repo.visitado(req.params.id, req.body);
+      const result = await this.repo.addBeer(req.params.id, req.body);
       res.json(result);
     } catch (error) {
       next(error);
