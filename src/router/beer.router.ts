@@ -3,6 +3,7 @@ import createDebug from 'debug';
 import { BeerController } from '../controller/beer.controler/beer.controler.js';
 import { BeerMongoRepo } from '../repos/beer/beer.mongo.repo.js';
 import { Interceptor } from '../middleware/auth.interceptor.js';
+import { FileInterceptor } from '../middleware/files.interceptor.js';
 
 const debug = createDebug('W7E:beer:router');
 
@@ -12,21 +13,41 @@ debug('Starting');
 const repo = new BeerMongoRepo();
 const controller = new BeerController(repo);
 const interceptor = new Interceptor();
+const fileInterceptor = new FileInterceptor();
 
 beerRouter.get(
   '/',
   interceptor.authorization.bind(interceptor),
   controller.getAll.bind(controller)
 );
-beerRouter.get('/:id', controller.getById.bind(controller));
-beerRouter.get('/search', controller.search.bind(controller));
+beerRouter.get(
+  '/:id',
+  interceptor.authorization.bind(interceptor),
+  controller.getById.bind(controller)
+);
+beerRouter.get(
+  '/search',
+  interceptor.authorization.bind(interceptor),
+  controller.search.bind(controller)
+);
 beerRouter.post(
   '/add',
+  fileInterceptor.singleFileStore('avatar').bind(fileInterceptor),
   interceptor.authorization.bind(interceptor),
-  interceptor.authenticationBeer.bind(interceptor),
+  interceptor.authentication.bind(interceptor),
   controller.create.bind(controller)
 );
-beerRouter.patch('/:id', controller.update.bind(controller));
-beerRouter.patch('addUser/:id', controller.update.bind(controller));
-beerRouter.patch('removeUser/:id', controller.update.bind(controller));
-beerRouter.delete('/:id', controller.delete.bind(controller));
+beerRouter.patch(
+  '/:id',
+  fileInterceptor.singleFileStore('avatar').bind(fileInterceptor),
+  interceptor.authorization.bind(interceptor),
+  interceptor.authentication.bind(interceptor),
+  controller.update.bind(controller)
+);
+beerRouter.delete(
+  '/:id',
+  fileInterceptor.singleFileStore('avatar').bind(fileInterceptor),
+  interceptor.authorization.bind(interceptor),
+  interceptor.authentication.bind(interceptor),
+  controller.delete.bind(controller)
+);

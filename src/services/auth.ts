@@ -9,7 +9,7 @@ export type TokenPayload = {
   email: string;
 } & jwt.JwtPayload;
 export abstract class Auth {
-  static secret = process.env.TOKENSECRET;
+  static secret = process.env.JWT_SECRET;
   static hash(value: string): Promise<string> {
     const slatRound = 10;
     return hash(value, slatRound);

@@ -9,7 +9,7 @@ export class FileInterceptor {
         destination: './public/upload',
         filename(_req, file, callback) {
           const prefix = crypto.randomUUID();
-          callback(null, prefix + file.originalname);
+          callback(null, prefix + '-' + file.originalname);
         },
       }),
       limits: { fileSize },

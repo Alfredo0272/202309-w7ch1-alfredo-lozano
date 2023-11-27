@@ -1,7 +1,7 @@
 export type ImgData = {
   publicId: string;
-  with: number;
-  height: number;
+  // With: number;
+  // height: number;
   format: string;
   url: string;
 };
