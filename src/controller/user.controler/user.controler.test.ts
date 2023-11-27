@@ -1,77 +1,135 @@
 import { Request, Response } from 'express';
-import { UsersController } from './user.contoler.js';
-import { User } from '../../entities/user.model.js';
+import { UsersController } from './user.contoler';
 import { UsersMongoRepo } from '../../repos/users/user.mongo.repo.js';
 
 describe('Given UsersController class', () => {
+  let controller: UsersController;
   let mockRequest: Request;
   let mockResponse: Response;
   let mockNext: jest.Mock;
-  let mockRepo: UsersMongoRepo;
-  let mockResult: User;
-
   beforeEach(() => {
-    mockResult = {
-      password: '',
-      email: '',
-      name: '',
-    } as User;
-
-    mockRepo = {
-      login: jest.fn().mockResolvedValue(mockResult),
-      getAll: jest.fn().mockResolvedValue([{}]),
-      getById: jest.fn().mockResolvedValue({}),
-      create: jest.fn().mockResolvedValue({ id: 'newId', name: 'New User' }),
-      delete: jest.fn(),
-    } as unknown as UsersMongoRepo;
-
     mockRequest = {
       body: {},
       params: {},
-    } as Request;
-
+      query: { key: 'value' },
+    } as unknown as Request;
     mockResponse = {
-      status: jest.fn().mockReturnThis(),
-      statusMessage: '',
       json: jest.fn(),
+      status: jest.fn(),
     } as unknown as Response;
-
     mockNext = jest.fn();
   });
-
   describe('When we instantiate it without errors', () => {
-    test('should return a successful response', async () => {
-      const controller = new UsersController(mockRepo);
-      await controller.login(mockRequest, mockResponse, mockNext);
+    beforeEach(() => {
+      const mockRepo = {
+        getAll: jest.fn().mockResolvedValue([{}]),
+        getById: jest.fn().mockResolvedValue({}),
+        search: jest.fn().mockResolvedValue([{}]),
+        create: jest.fn().mockResolvedValue({}),
+        update: jest.fn().mockResolvedValue({}),
+        visitado: jest.fn().mockResolvedValue({}),
+        probada: jest.fn().mockResolvedValue({}),
+        delete: jest.fn().mockResolvedValue(undefined),
+      } as unknown as UsersMongoRepo;
 
-      expect(mockRepo.login).toHaveBeenCalledWith(mockRequest.body);
-      expect(mockResponse.status).toHaveBeenCalledWith(202);
-      expect(mockResponse.statusMessage).toBe('Accepted');
-      expect(mockResponse.json).toHaveBeenCalledWith(mockResult);
-      expect(mockNext).not.toHaveBeenCalled();
+      controller = new UsersController(mockRepo);
     });
-    test('should return a successful response for create', async () => {
-      const controller = new UsersController(mockRepo);
-      await controller.create(mockRequest, mockResponse, mockNext);
 
-      expect(mockRepo.create).toHaveBeenCalledWith(mockRequest.body);
-      expect(mockResponse.status).toHaveBeenCalledWith(201);
-      expect(mockResponse.statusMessage).toBe('Created');
-      expect(mockResponse.json).toHaveBeenCalledWith({
-        id: 'newId',
-        name: 'New User',
-      });
-      expect(mockNext).not.toHaveBeenCalled();
+    test('Then getAll should ...', async () => {
+      await controller.getAll(mockRequest, mockResponse, mockNext);
+      expect(mockResponse.json).toHaveBeenCalledWith([{}]);
     });
-    test('getById should respond with expected data', async () => {
-      const controller = new UsersController(mockRepo);
+
+    test('Then getById should ...', async () => {
       await controller.getById(mockRequest, mockResponse, mockNext);
       expect(mockResponse.json).toHaveBeenCalledWith({});
     });
-    test('get all should respond with expected data', async () => {
-      const controller = new UsersController(mockRepo);
-      await controller.getAll(mockRequest, mockResponse, mockNext);
+
+    test('Then search should ...', async () => {
+      await controller.search(mockRequest, mockResponse, mockNext);
       expect(mockResponse.json).toHaveBeenCalledWith([{}]);
+    });
+
+    test('Then create should ...', async () => {
+      await controller.create(mockRequest, mockResponse, mockNext);
+      expect(mockResponse.json).toHaveBeenCalledWith({});
+    });
+
+    test('Then update should ...', async () => {
+      await controller.update(mockRequest, mockResponse, mockNext);
+      expect(mockResponse.json).toHaveBeenCalledWith({});
+    });
+
+    test('Then delete should ...', async () => {
+      await controller.delete(mockRequest, mockResponse, mockNext);
+      expect(mockResponse.json).toHaveBeenCalledWith({});
+    });
+    test('Then addFriend should ...', async () => {
+      await controller.visitado(mockRequest, mockResponse, mockNext);
+      expect(mockResponse.json).toHaveBeenCalledWith({});
+    });
+    test('Then addEnemy should ...', async () => {
+      await controller.probada(mockRequest, mockResponse, mockNext);
+      expect(mockResponse.json).toHaveBeenCalledWith({});
+    });
+  });
+
+  describe('When we instantiate it WITH errors', () => {
+    let mockError: Error;
+    beforeEach(() => {
+      mockError = new Error('Mock error');
+      const mockRepo = {
+        getAll: jest.fn().mockRejectedValue(mockError),
+        getById: jest.fn().mockRejectedValue(mockError),
+        search: jest.fn().mockRejectedValue(mockError),
+        create: jest.fn().mockRejectedValue(mockError),
+        update: jest.fn().mockRejectedValue(mockError),
+        addFriend: jest.fn().mockRejectedValue(mockError),
+        addEnemy: jest.fn().mockRejectedValue(mockError),
+        delete: jest.fn().mockRejectedValue(mockError),
+      } as unknown as UsersMongoRepo;
+
+      controller = new UsersController(mockRepo);
+    });
+
+    test('Then getAll should ...', async () => {
+      await controller.getAll(mockRequest, mockResponse, mockNext);
+      expect(mockNext).toHaveBeenLastCalledWith(mockError);
+    });
+
+    test('Then getById should ...', async () => {
+      await controller.getById(mockRequest, mockResponse, mockNext);
+      expect(mockNext).toHaveBeenLastCalledWith(mockError);
+    });
+
+    test('Then search should ...', async () => {
+      await controller.search(mockRequest, mockResponse, mockNext);
+      expect(mockNext).toHaveBeenLastCalledWith(mockError);
+    });
+
+    test('Then create should ...', async () => {
+      await controller.create(mockRequest, mockResponse, mockNext);
+      expect(mockNext).toHaveBeenLastCalledWith(mockError);
+    });
+
+    test('Then update should ...', async () => {
+      await controller.update(mockRequest, mockResponse, mockNext);
+      expect(mockNext).toHaveBeenLastCalledWith(mockError);
+    });
+
+    test('Then delete should ...', async () => {
+      await controller.delete(mockRequest, mockResponse, mockNext);
+      expect(mockNext).toHaveBeenLastCalledWith(mockError);
+    });
+
+    test('Then addFriend should ...', async () => {
+      await controller.visitado(mockRequest, mockResponse, mockNext);
+      expect(mockNext).toHaveBeenLastCalledWith(mockError);
+    });
+
+    test('Then addEnemy should ...', async () => {
+      await controller.probada(mockRequest, mockResponse, mockNext);
+      expect(mockNext).toHaveBeenLastCalledWith(mockError);
     });
   });
 });

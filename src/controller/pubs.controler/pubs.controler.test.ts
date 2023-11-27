@@ -29,7 +29,7 @@ describe('Given BeerController class', () => {
         getAll: jest.fn().mockResolvedValue([{}]),
         getById: jest.fn().mockResolvedValue({}),
         serach: jest.fn().mockResolvedValue({}),
-        create: jest.fn().mockResolvedValue({ id: 'newId', name: 'New Beer' }),
+        create: jest.fn().mockResolvedValue({ id: 'newId' }),
         delete: jest.fn(),
       } as unknown as PubsMongoRepo;
 
@@ -47,8 +47,7 @@ describe('Given BeerController class', () => {
     });
 
     test('create should return new data', async () => {
-      const mockBeer = { id: 'newId', name: 'New Beer' };
-      mockRequest.body = mockBeer;
+      const mockBeer = { id: 'newId' };
 
       await controller.create(mockRequest, mockResponse, mockNext);
 

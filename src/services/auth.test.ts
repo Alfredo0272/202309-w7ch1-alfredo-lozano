@@ -6,7 +6,7 @@ import { compare, hash } from 'bcrypt';
 jest.mock('jsonwebtoken');
 jest.mock('bcrypt');
 
-describe('Given the AuthServices class', () => {
+describe('Given the Auth class', () => {
   describe('When I use createJWT method', () => {
     test('Then the JWT sign method should be called', () => {
       const mockPayload = {} as TokenPayload;

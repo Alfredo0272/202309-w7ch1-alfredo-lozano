@@ -1,5 +1,7 @@
 const serverUrl = 'http://localhost:1969';
 
+let result = {};
+
 const handlesubmit = async (event) => {
   event.preventDefault();
   const form = event.target;
@@ -8,7 +10,7 @@ const handlesubmit = async (event) => {
     password: form.elements.namedItem('password').value,
   };
 
-  const url = serverUrl + '/user/loggin/';
+  const url = serverUrl + '/user/login/';
   const response = await fetch(url, {
     method: 'POST',
     body: JSON.stringify(userLogin),
@@ -16,7 +18,7 @@ const handlesubmit = async (event) => {
       'Content-Type': 'application/json',
     },
   });
-  const result = await response.json();
+  result = await response.json();
   console.log('Login result', result);
 
   localStorage.setItem('week7', JSON.stringify({ token: result.token }));
@@ -27,9 +29,22 @@ const handleLogOut = () => {
   localStorage.removeItem('week7');
 };
 
-const storedToken = JSON.parse(localStorage.getItem('week7')) || {};
+// Const logingWithToken = async (token) => {
+//   const url = serverUrl + '/user/token/';
+//   const userLogin = {
+//     email: '', // Adjust based on your requirements
+//     password: '', // Adjust based on your requirements
+//   };
 
-const result = { token: storedToken.token };
+//   // Handle the response as needed
+// };
+
+// const storedData = localStorage.getItem('week7');
+// if (storedData) {
+//   logingWithToken(JSON.parse(storedData).token);
+// }
+
+// console.log('initial result', storedData);
 
 document.querySelector('form').addEventListener('submit', handlesubmit);
 document

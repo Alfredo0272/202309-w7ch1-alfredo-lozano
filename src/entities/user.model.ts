@@ -1,17 +1,17 @@
 import { Pubs } from './pubs.model';
 import { Beer } from './beer.model';
 
-export type LoginUser = {
+export type UserLogin = {
   password: string;
   email: string;
 };
 
-export type User = LoginUser & {
+export type User = UserLogin & {
   id: string;
   name: string;
   surname: string;
   age: number;
-  userNane: string;
+  userName: string;
   visitado: Pubs[];
   probada: Beer[];
 };

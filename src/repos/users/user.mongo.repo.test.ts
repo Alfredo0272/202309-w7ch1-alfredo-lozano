@@ -1,35 +1,58 @@
-import fs from 'fs/promises';
 import { UsersMongoRepo } from './user.mongo.repo.js';
 import { UserModel } from './users.mongo.model.js';
+jest.mock('./users.mongo.model');
 
-jest.mock('fs/promises');
-
-describe('Given PubsMongoRepo class', () => {
+describe('Given UserMongoRepo class', () => {
   let repo: UsersMongoRepo;
-
-  beforeEach(() => {
-    const mockData = '[{"name": "Test"}]';
-    fs.readFile = jest.fn().mockResolvedValue(mockData);
-    fs.writeFile = jest.fn();
-    repo = new UsersMongoRepo();
+  describe('When we isntantiate it without errors', () => {
+    const exec = jest.fn().mockReturnValue('Test');
+    beforeEach(() => {
+      UserModel.find = jest.fn().mockReturnValue({
+        populate: jest.fn().mockReturnValue({
+          exec,
+        }),
+      });
+      UserModel.findOne = jest.fn().mockReturnValue({
+        populate: jest.fn().mockReturnValue({
+          exec,
+        }),
+      });
+      UserModel.findById = jest.fn().mockReturnValue({
+        exec,
+      });
+      UserModel.create = jest.fn();
+      repo = new UsersMongoRepo();
+    });
+    test('Then it should execute getById', async () => {
+      const result = await repo.getById('');
+      expect(exec).toHaveBeenCalled();
+      expect(result).toBe('Test');
+    });
+    test('Then it should create', async () => {
+      const newItem = {
+        username: 'testUser',
+        password: 'testPassword',
+      };
+      UsersMongoRepo.prototype.getById = jest.fn().mockResolvedValue(newItem);
+      UsersMongoRepo.prototype.update = jest.fn();
+    });
+    test('ahould search', async () => {
+      const result = await repo.search({ key: 'name', value: true });
+      expect(exec).toHaveBeenCalled();
+      expect(result).toBe('name');
+    });
   });
+  describe('When we isntantiate it WITH errors', () => {
+    const exec = jest.fn().mockRejectedValue(new Error('Test'));
+    beforeEach(() => {
+      UserModel.findById = jest.fn().mockReturnValue({
+        exec,
+      });
+      repo = new UsersMongoRepo();
+    });
 
-  test('should instantiate PubsMongoRepo without errors', () => {
-    expect(repo).toBeInstanceOf(UsersMongoRepo);
-  });
-
-  test('should return a Pubs object when given a valid id', async () => {
-    const mockId = '';
-    const usersWithMockId = {
-      id: mockId,
-      name: 'Mock Pubs',
-      password: 'mock pepe',
-      email: 'mock direction',
-    };
-    jest.spyOn(UserModel, 'findById').mockResolvedValueOnce(usersWithMockId);
-    const result = await repo.getById(mockId);
-
-    expect(result).toEqual(usersWithMockId);
-    expect(UserModel.findById).toHaveBeenCalledWith(mockId);
+    test('Then it should execute getById', async () => {
+      expect(repo.getById('')).rejects.toThrow();
+    });
   });
 });

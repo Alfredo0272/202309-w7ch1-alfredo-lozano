@@ -12,7 +12,7 @@ export const userSchema = new Schema<User>({
     required: true,
     unique: true,
   },
-  userNane: {
+  userName: {
     type: String,
     required: false,
     unique: true,
