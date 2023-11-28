@@ -16,7 +16,6 @@ export class Interceptor {
   authorization(req: Request, _res: Response, next: NextFunction) {
     try {
       const tokenHeader = req.get('Authorization');
-
       if (!tokenHeader?.startsWith('bearer'))
         throw new HttpError(401, ' Unauthoriced');
       const token = tokenHeader.split(' ')[1];

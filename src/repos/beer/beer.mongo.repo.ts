@@ -25,7 +25,7 @@ export class BeerMongoRepo implements Repository<Beer> {
   }): Promise<Beer[]> {
     const result = await BeerModel.find({ [key]: value })
       .populate('author', {
-        notes: 0,
+        user: 0,
       })
       .exec();
 

@@ -32,9 +32,9 @@ beerRouter.get(
 );
 beerRouter.post(
   '/add',
-  fileInterceptor.singleFileStore('avatar').bind(fileInterceptor),
-  interceptor.authorization.bind(interceptor),
   interceptor.authentication.bind(interceptor),
+  interceptor.authorization.bind(interceptor),
+  fileInterceptor.singleFileStore('avatar').bind(fileInterceptor),
   controller.create.bind(controller)
 );
 beerRouter.patch(

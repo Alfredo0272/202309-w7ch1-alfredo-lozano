@@ -7,7 +7,7 @@ export type Beer = {
   brewer: string;
   style: string;
   alcohol: string;
-  avatar: ImgData;
+  beerImg: ImgData;
   probada: boolean;
   autor: User;
 };

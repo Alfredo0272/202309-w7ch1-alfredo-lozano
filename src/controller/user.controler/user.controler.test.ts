@@ -30,6 +30,8 @@ describe('Given UsersController class', () => {
         addBeer: jest.fn().mockResolvedValue({}),
         addPub: jest.fn().mockResolvedValue({}),
         delete: jest.fn().mockResolvedValue(undefined),
+        removePub: jest.fn().mockResolvedValue({}),
+        removeBeer: jest.fn().mockResolvedValue({}),
       } as unknown as UsersMongoRepo;
 
       controller = new UsersController(mockRepo);
@@ -72,6 +74,14 @@ describe('Given UsersController class', () => {
       await controller.addPub(mockRequest, mockResponse, mockNext);
       expect(mockResponse.json).toHaveBeenCalledWith({});
     });
+    test('then deletePub should...', async () => {
+      await controller.removePub(mockRequest, mockResponse, mockNext);
+      expect(mockResponse.json).toHaveBeenCalledWith({});
+    });
+    test('then deleteBeer should...', async () => {
+      await controller.removeBeer(mockRequest, mockResponse, mockNext);
+      expect(mockResponse.json).toHaveBeenCalledWith({});
+    });
   });
 
   describe('When we instantiate it WITH errors', () => {
@@ -84,9 +94,11 @@ describe('Given UsersController class', () => {
         search: jest.fn().mockRejectedValue(mockError),
         create: jest.fn().mockRejectedValue(mockError),
         update: jest.fn().mockRejectedValue(mockError),
-        addFriend: jest.fn().mockRejectedValue(mockError),
-        addEnemy: jest.fn().mockRejectedValue(mockError),
+        addPub: jest.fn().mockRejectedValue(mockError),
+        addBeer: jest.fn().mockRejectedValue(mockError),
         delete: jest.fn().mockRejectedValue(mockError),
+        removeBeer: jest.fn().mockRejectedValue(mockError),
+        removePub: jest.fn().mockRejectedValue(mockError),
       } as unknown as UsersMongoRepo;
 
       controller = new UsersController(mockRepo);
@@ -121,15 +133,21 @@ describe('Given UsersController class', () => {
       await controller.delete(mockRequest, mockResponse, mockNext);
       expect(mockNext).toHaveBeenLastCalledWith(mockError);
     });
-
-    // Test('Then addFriend should ...', async () => {
-    //   await controller.visitado(mockRequest, mockResponse, mockNext);
-    //   expect(mockNext).toHaveBeenLastCalledWith(mockError);
-    // });
-
-    // test('Then addEnemy should ...', async () => {
-    //   await controller.probada(mockRequest, mockResponse, mockNext);
-    //   expect(mockNext).toHaveBeenLastCalledWith(mockError);
-    // });
+    test('then addPub should..', async () => {
+      await controller.addPub(mockRequest, mockResponse, mockNext);
+      expect(mockNext).toHaveBeenLastCalledWith(mockError);
+    });
+    test('then addBeer should..', async () => {
+      await controller.addBeer(mockRequest, mockResponse, mockNext);
+      expect(mockNext).toHaveBeenLastCalledWith(mockError);
+    });
+    test('then removeBeer should..', async () => {
+      await controller.removeBeer(mockRequest, mockResponse, mockNext);
+      expect(mockNext).toHaveBeenLastCalledWith(mockError);
+    });
+    test('then removePub should..', async () => {
+      await controller.removePub(mockRequest, mockResponse, mockNext);
+      expect(mockNext).toHaveBeenLastCalledWith(mockError);
+    });
   });
 });

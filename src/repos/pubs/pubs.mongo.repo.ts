@@ -20,7 +20,7 @@ export class PubsMongoRepo implements Repository<Pubs> {
   }): Promise<Pubs[]> {
     const result = await PubsModel.find({ [key]: value })
       .populate('author', {
-        notes: 0,
+        user: 0,
       })
       .exec();
 

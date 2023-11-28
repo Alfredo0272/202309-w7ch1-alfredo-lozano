@@ -26,6 +26,12 @@ export const BeersSchema = new Schema<Beer>({
     type: Schema.Types.ObjectId,
     ref: 'User',
   },
+  beerImg: {
+    publicId: String,
+    size: Number,
+    format: String,
+    url: String,
+  },
   probada: {
     type: Boolean,
     required: false,

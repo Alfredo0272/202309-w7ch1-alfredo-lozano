@@ -24,6 +24,7 @@ describe('Given UserMongoRepo class', () => {
       UserModel.findByIdAndUpdate = jest.fn().mockReturnValue({
         exec: jest.fn().mockResolvedValue({}),
       });
+      Auth.compare = jest.fn().mockResolvedValue(true);
     });
 
     test('should return a user object when a valid id is passed', async () => {
@@ -74,7 +75,6 @@ describe('Given UserMongoRepo class', () => {
 
       const repo = new UsersMongoRepo();
       const result = await repo.getAll();
-
       expect(result).toEqual(mockUsers);
       expect(UserModel.find).toHaveBeenCalledTimes(1);
     });
@@ -93,17 +93,10 @@ describe('Given UserMongoRepo class', () => {
         probada: [],
         email: 'test@example.com',
         password: 'hashedPassword',
-        avatar: {
-          publicId: '',
-
-          format: '',
-          url: '',
-        },
       };
       UserModel.findOne = jest
         .fn()
         .mockReturnValue({ exec: jest.fn().mockResolvedValue(user) });
-      Auth.compare = jest.fn().mockResolvedValue(true);
       const result = await repo.login(loginUser);
       expect(UserModel.findOne).toHaveBeenCalledWith({
         email: loginUser.email,
@@ -129,12 +122,6 @@ describe('Given UserMongoRepo class', () => {
         probada: [],
         email: 'john.doe@example.com',
         password: 'hashedPassword',
-        avatar: {
-          publicId: '',
-
-          format: '',
-          url: '',
-        },
       };
       const hashedPassword = 'hashedPassword';
       const createdUser: User = {
