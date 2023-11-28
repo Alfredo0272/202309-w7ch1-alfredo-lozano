@@ -9,7 +9,9 @@ describe('Given UsersController class', () => {
   let mockNext: jest.Mock;
   beforeEach(() => {
     mockRequest = {
-      body: {},
+      body: {
+        password: 'password123',
+      },
       params: {},
       query: { key: 'value' },
     } as unknown as Request;

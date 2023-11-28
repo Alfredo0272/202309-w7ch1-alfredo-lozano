@@ -2,7 +2,6 @@ import { Router as createRouter } from 'express';
 import createDebug from 'debug';
 import { UsersMongoRepo } from '../repos/users/user.mongo.repo.js';
 import { UsersController } from '../controller/user.controler/user.contoler.js';
-import { FileInterceptor } from '../middleware/files.interceptor.js';
 import { Interceptor } from '../middleware/auth.interceptor.js';
 
 const debug = createDebug('W7E:user:router');
@@ -12,15 +11,14 @@ debug('Starting');
 
 const repo = new UsersMongoRepo();
 const controller = new UsersController(repo);
-const fileInterceptor = new FileInterceptor();
 const interceptor = new Interceptor();
 
+usersRouter.post('/register', controller.create.bind(controller));
 usersRouter.post(
-  '/register',
-  fileInterceptor.singleFileStore('avatar').bind(fileInterceptor),
-  controller.create.bind(controller)
+  '/login',
+  interceptor.authentication.bind(interceptor),
+  controller.login.bind(controller)
 );
-usersRouter.post('/login', controller.login.bind(controller));
 usersRouter.patch(
   '/addBeer/:id',
   interceptor.authorization.bind(interceptor),
