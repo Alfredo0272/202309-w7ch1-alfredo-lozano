@@ -5,7 +5,7 @@ import { User } from '../../entities/user.model.js';
 import { Auth } from '../../services/auth.js';
 import { Controller } from '../controler.js';
 import { LoginResponse } from '../../types/loging.response.js';
-import { LoginResponse } from '../../types/loging.js';
+
 const debug = createDebug('W7E:users:controller');
 
 export class UsersController extends Controller<User> {
@@ -20,7 +20,6 @@ export class UsersController extends Controller<User> {
         ? await this.repo.getById(req.body.userId)
         : await this.repo.login(req.body);
 
-      const data: LoginResponse = {
       const data: LoginResponse = {
         user: result,
         token: Auth.signJWT({
