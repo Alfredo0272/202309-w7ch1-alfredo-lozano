@@ -14,9 +14,7 @@ export class UsersMongoRepo implements UserRepository<User> {
   }
 
   async login(loginUser: UserLogin): Promise<User> {
-    const result = await UserModel.findOne({
-      email: loginUser.email,
-    }).exec();
+    const result = await UserModel.findOne({ email: loginUser.email }).exec();
     if (!result || !(await Auth.compare(loginUser.password, result.password)))
       throw new HttpError(401, 'Unauthorized');
     return result;

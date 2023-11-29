@@ -1,8 +1,8 @@
 /* eslint-disable camelcase */
 import { v2 as cloudinary } from 'cloudinary';
 import createDebug from 'debug';
-import { ImgData } from '../types/imgFiles';
-import { HttpError } from '../types/http.error';
+import { ImgData } from '../types/imgFiles.js';
+import { HttpError } from '../types/http.error.js';
 
 const debug = createDebug('W7E:media.files');
 
@@ -17,7 +17,7 @@ export class MediaFiles {
     cloudinary.config({
       secure: true,
     });
-    debug('Istantiated');
+    debug('Instantiated');
     debug('Key:', process.env.CLOUDINARY_KEY);
   }
 

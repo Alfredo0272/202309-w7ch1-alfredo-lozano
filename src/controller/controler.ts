@@ -1,6 +1,6 @@
-import { Repository } from '../repos/repo';
+import { Repository } from '../repos/repo.js';
 import { NextFunction, Request, Response } from 'express';
-import { MediaFiles } from '../services/media.files';
+import { MediaFiles } from '../services/media.files.js';
 
 export abstract class Controller<X extends { id: unknown }> {
   cloudinaryService: MediaFiles;
