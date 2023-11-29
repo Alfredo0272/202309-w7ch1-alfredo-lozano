@@ -13,12 +13,9 @@ const repo = new UsersMongoRepo();
 const controller = new UsersController(repo);
 const interceptor = new Interceptor();
 
+usersRouter.post('/login', controller.login.bind(controller));
 usersRouter.post('/register', controller.create.bind(controller));
-usersRouter.post(
-  '/login',
-  interceptor.authentication.bind(interceptor),
-  controller.login.bind(controller)
-);
+usersRouter.get('/', controller.getAll.bind(controller));
 usersRouter.patch(
   '/addBeer/:id',
   interceptor.authorization.bind(interceptor),
@@ -38,4 +35,10 @@ usersRouter.patch(
   '/delPub/:id',
   interceptor.authorization.bind(interceptor),
   controller.removeBeer.bind(controller)
+);
+
+usersRouter.patch(
+  '/login',
+  interceptor.authorization.bind(interceptor),
+  controller.login.bind(controller)
 );
