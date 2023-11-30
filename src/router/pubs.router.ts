@@ -41,6 +41,11 @@ pubsRouter.patch(
   controller.update.bind(controller)
 );
 pubsRouter.patch(
+  '/addbeer/',
+  interceptor.authorization.bind(interceptor),
+  controller.addBeer.bind(controller)
+);
+pubsRouter.patch(
   'addpubs/:id',
   interceptor.authorization.bind(interceptor),
   interceptor.authentication.bind(interceptor),

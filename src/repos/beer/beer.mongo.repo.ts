@@ -1,4 +1,4 @@
-import { Repository } from '../repo';
+import { Repository } from '../beer.repo';
 import { HttpError } from '../../types/http.error.js';
 import createDebug from 'debug';
 import { BeerModel } from './beer.mongo.model.js';

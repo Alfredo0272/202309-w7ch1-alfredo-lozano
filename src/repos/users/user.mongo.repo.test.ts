@@ -48,6 +48,27 @@ describe('Given UserMongoRepo class', () => {
       expect(UserModel.findById).toHaveBeenCalledWith(id);
       expect(result).toEqual(user);
     });
+    test("should update a user's data when valid id and newData are provided", async () => {
+      const id = 'validId';
+      const newData: Partial<User> = {
+        name: 'New Name',
+        age: 30,
+      };
+      const updatedUser: User = {
+        id: 'validId',
+        name: 'New Name',
+        age: 30,
+      } as unknown as User;
+      UserModel.findByIdAndUpdate = jest
+        .fn()
+        .mockReturnValue({ exec: jest.fn().mockResolvedValue(updatedUser) });
+      const result = await repo.update(id, newData);
+
+      expect(result).toEqual(updatedUser);
+      expect(UserModel.findByIdAndUpdate).toHaveBeenCalledWith(id, newData, {
+        new: true,
+      });
+    });
     test('should return an array of users when there are users in the database', async () => {
       const mockUsers = [
         {
@@ -351,7 +372,6 @@ describe('Given UserMongoRepo class', () => {
       );
     });
     test('should throw a HttpError with status 404 when the update fails', async () => {
-      // Arrange
       const pubIdToRemove = 'pubId';
       const userId = 'userId';
       const user = {
@@ -406,6 +426,16 @@ describe('Given UserMongoRepo class', () => {
       await expect(repo.removeBeer(beerIdToRemove, userId)).rejects.toThrow(
         HttpError
       );
+    });
+    test('should throw HttpError with 401 status when invalid email is provided', async () => {
+      const loginUser: UserLogin = {
+        email: 'invalid@example.com',
+        password: 'password123',
+      };
+      UserModel.findOne = jest
+        .fn()
+        .mockReturnValue({ exec: jest.fn().mockResolvedValue(null) });
+      await expect(repo.login(loginUser)).rejects.toThrow(HttpError);
     });
   });
 });

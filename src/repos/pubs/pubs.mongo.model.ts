@@ -17,6 +17,12 @@ export const PubsSchema = new Schema<Pubs>({
     required: false,
     unique: true,
   },
+  Beers: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Beers',
+    },
+  ],
   visitado: [
     {
       type: Schema.Types.ObjectId,

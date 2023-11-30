@@ -39,14 +39,13 @@ beerRouter.post(
 );
 beerRouter.patch(
   '/:id',
-  fileInterceptor.singleFileStore('avatar').bind(fileInterceptor),
   interceptor.authorization.bind(interceptor),
   interceptor.authentication.bind(interceptor),
+  fileInterceptor.singleFileStore('avatar').bind(fileInterceptor),
   controller.update.bind(controller)
 );
 beerRouter.delete(
   '/:id',
-  fileInterceptor.singleFileStore('avatar').bind(fileInterceptor),
   interceptor.authorization.bind(interceptor),
   interceptor.authentication.bind(interceptor),
   controller.delete.bind(controller)

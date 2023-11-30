@@ -1,12 +1,13 @@
-import { Repository } from '../repo.js';
+import { PubsRepository } from '../pubs.repo.js';
 import { HttpError } from '../../types/http.error.js';
 import createDebug from 'debug';
 import { PubsModel } from './pubs.mongo.model.js';
 import { Pubs } from '../../entities/pubs.model.js';
+import { Beer } from '../../entities/beer.model.js';
 
 const debug = createDebug('W7E:Pubs:mongo:repo');
 
-export class PubsMongoRepo implements Repository<Pubs> {
+export class PubsMongoRepo implements PubsRepository<Pubs> {
   constructor() {
     debug('instantiated');
   }
@@ -63,6 +64,64 @@ export class PubsMongoRepo implements Repository<Pubs> {
     const result = await PubsModel.findByIdAndDelete(id);
     if (!result) {
       throw new HttpError(404, 'Not Found', 'Delete not Possible');
+    }
+  }
+
+  async addBeer(beerId: Beer['id'], pubId: Pubs['id']): Promise<Pubs> {
+    const pub = await PubsModel.findById(pubId).exec();
+
+    if (!pub) {
+      throw new HttpError(404, 'Not Found', 'Pub not found');
+    }
+
+    if (pub.Beers.includes(beerId as unknown as Beer)) {
+      return pub;
+    }
+
+    const updatedPub = await PubsModel.findByIdAndUpdate(
+      pubId,
+      { $push: { Beers: beerId } },
+      {
+        new: true,
+      }
+    ).exec();
+
+    if (!updatedPub) {
+      throw new HttpError(404, 'Not Found', 'Update not possible');
+    }
+
+    return updatedPub;
+  }
+
+  async removeBeer(
+    beerIdToRemove: Beer['id'],
+    pubId: Pubs['id']
+  ): Promise<Pubs> {
+    // eslint-disable-next-line no-useless-catch
+    try {
+      const user = await PubsModel.findById(pubId).exec();
+
+      if (!user) {
+        throw new HttpError(404, 'Not Found', 'User not found');
+      }
+
+      if (!user.Beers.includes(beerIdToRemove as unknown as Beer)) {
+        return user;
+      }
+
+      const updatedUser = await PubsModel.findByIdAndUpdate(
+        pubId,
+        { $pull: { Beers: beerIdToRemove } },
+        { new: true }
+      ).exec();
+
+      if (!updatedUser) {
+        throw new HttpError(404, 'Not Found', 'Update not possible');
+      }
+
+      return updatedUser;
+    } catch (error) {
+      throw error;
     }
   }
 }
