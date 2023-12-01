@@ -4,7 +4,7 @@ import { UsersMongoRepo } from '../../repos/users/user.mongo.repo.js';
 import { User } from '../../entities/user.model.js';
 import { Auth } from '../../services/auth.js';
 import { Controller } from '../controler.js';
-import { LoginResponse } from '../../types/loging.response.js';
+
 const debug = createDebug('W7E:users:controller');
 
 export class UsersController extends Controller<User> {

@@ -10,7 +10,7 @@ export type TokenPayload = {
   role: User['role'];
 } & jwt.JwtPayload;
 export abstract class Auth {
-  static secret = process.env.TOKENSECRET;
+  static secret = process.env.JWT_SECRET;
   static hash(value: string): Promise<string> {
     const saltRound = 10;
     return hash(value, saltRound);

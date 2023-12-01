@@ -1,4 +1,4 @@
-import { Repository } from '../repos/repo.js';
+import { Repository } from '../repos/beer.repo.js';
 import { NextFunction, Request, Response } from 'express';
 import { MediaFiles } from '../services/media.files.js';
 
