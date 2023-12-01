@@ -14,4 +14,5 @@ export type User = UserLogin & {
   userName: string;
   visitado: Pubs[];
   probada: Beer[];
+  role: 'admin' | 'user';
 };

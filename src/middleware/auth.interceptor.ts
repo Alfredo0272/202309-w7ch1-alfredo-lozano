@@ -40,4 +40,14 @@ export class Interceptor {
       next(error);
     }
   }
+
+  isAdmin(req: Request, res: Response, next: NextFunction) {
+    try {
+      if (req.body.tokenRole !== 'admin')
+        throw new HttpError(401, 'Unauthorized', 'Not authorized role');
+      next();
+    } catch (error) {
+      next(error);
+    }
+  }
 }

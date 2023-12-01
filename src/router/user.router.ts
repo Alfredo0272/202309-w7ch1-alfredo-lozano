@@ -42,3 +42,13 @@ usersRouter.patch(
   interceptor.authorization.bind(interceptor),
   controller.login.bind(controller)
 );
+
+usersRouter.delete(
+  '/:id',
+  // Interceptor.authorization.bind(interceptor), // A
+  // Los usuariosn borran lo suyo
+  // interceptor.authentication.bind(interceptor),
+  // Los admin borran lo de los demás
+  interceptor.isAdmin.bind(interceptor),
+  controller.delete.bind(controller)
+);
